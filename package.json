@@ -1,0 +1,27 @@
+{
+  "name": "assdeb",
+  "version": "1.0.0",
+  "description": "An assembler debugger",
+  "main": "main.js",
+  "scripts": {
+    "test": "test",
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make"
+  },
+  "author": "Thomas ANTOINE",
+  "license": "ISC",
+  "devDependencies": {
+    "@electron-forge/cli": "^6.0.0",
+    "@electron-forge/maker-deb": "^6.0.0",
+    "@electron-forge/maker-rpm": "^6.0.0",
+    "@electron-forge/maker-squirrel": "^6.0.0",
+    "@electron-forge/maker-zip": "^6.0.0",
+    "electron": "^21.2.2"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.8",
+    "electron-squirrel-startup": "^1.0.0",
+    "fs": "^0.0.1-security"
+  }
+}

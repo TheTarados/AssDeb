@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">        
+    <meta charset="UTF-8">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>AssDeb</title>
+    <script defer src = "render.js"></script>
+  </head>
+  <body>
+    <div id="container">
+      <textarea spellcheck="false" id="text_zone"></textarea>
+
+      <div class = "registers">
+        <div class = register_container>
+          <div class = register id = "reg0"></div>
+          <div class = base_change id = base_change_0>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg1"></div>
+          <div class = base_change id = base_change_1>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg2"></div>
+          <div class = base_change id = base_change_2> </div>
+        </div><div class = register_container>
+          <div class = register id = "reg3"></div>
+          <div class = base_change id = base_change_3>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg4"></div>
+          <div class = base_change id = base_change_4>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg5"></div>
+          <div class = base_change id = base_change_5>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg6"></div>
+          <div class = base_change id = base_change_6>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg7"></div>
+          <div class = base_change id = base_change_7>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg8"></div>
+          <div class = base_change id = base_change_8>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg9"></div>
+          <div class = base_change id = base_change_9>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg10"></div>
+          <div class = base_change id = base_change_10>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg11"></div>
+          <div class = base_change id = base_change_11>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg12"></div>
+          <div class = base_change id = base_change_12>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg13"></div>
+          <div class = base_change id = base_change_13>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg14"></div>
+          <div class = base_change id = base_change_14>  </div>
+        </div><div class = register_container>
+          <div class = register id = "reg15"></div>
+          <div class = base_change id = base_change_15>  </div>
+        </div>
+        <div class = register_container>
+          <div class = register id = "N"></div>
+        </div><div class = register_container>
+          <div class = register id = "Z"></div>
+        </div><div class = register_container>
+          <div class = register id = "C"></div>
+        </div><div class = register_container>
+          <div class = register id = "V"></div>
+        </div>
+      </div>
+    </div>
+    <div id="line_number"></div>
+    <div id="com_ind"></div>
+    <div class = 'ex_buttons'>
+
+      <button id="step" class = 'ex_button'>
+        <div class = inside_button>
+          <div class="rectangle"></div> 
+          <div class="space"></div> 
+          <div class="triangle"></div>
+      </div>
+      </button>
+      <button id="run" class = 'ex_button'>
+        <div class = inside_button>
+          <div class="triangle"></div>
+          <div class="triangle"></div>
+        </div>
+      </button>
+      <button id="pause" class = 'ex_button'>
+        <div class = inside_button>
+          <div class="rectangle"></div> 
+          <div class="space"></div> 
+          <div class="rectangle"></div> 
+      </div>
+      </button>
+      <button id="stop" class = 'ex_button'>
+        <div class = inside_button>
+          <div class="square"></div>
+        </div>
+      </button>
+      <div class="slider">
+        <input id = "slider" type="range" min="180" max="300" value="269">
+      </div>
+    </div>
+  </body>
+</html>
