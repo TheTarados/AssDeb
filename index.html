@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link rel="stylesheet" href="style.css">        
+    <link rel="stylesheet" href="CSS/style.css">    
+    <link rel="stylesheet" href="CSS/shapes.css">    
+    <link rel="stylesheet" href="CSS/buttons.css">   
+    <link rel="stylesheet" href="CSS/register.css">    
+    <link rel="stylesheet" href="CSS/timeline.css">        
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>AssDeb</title>
-    <script defer src = "render.js"></script>
+    <script defer src = "js/render_logic/run.js"></script>
+    <script defer src = "js/render_logic/timeline.js"></script>
+    <script defer src = "js/render_logic/armv4/armv4.js"></script>
+    <script defer src = "js/render_logic/armv4/instructions.js"></script>
+    <script defer src = "js/render_logic/armv4/utils.js"></script>
+    <script defer src = "js/render_logic/utils.js"></script>
+    <script defer src = "js/render_logic/render.js"></script>
+    <script defer src = "js/render_logic/electron_inter.js"></script>
   </head>
   <body>
     <div id="container">
+      <div id="com_ind"></div>
+      <div id="break_ind"></div>
+      <div id="error_info"></div>
       <textarea spellcheck="false" id="text_zone"></textarea>
-
-      <div class = "registers">
+      <div class = "memory" id="ram"></div>
+      <div class = "memory" id="stack"></div>
+      <div class = "memory" id = "registers">
         <div class = register_container>
           <div class = register id = "reg0"></div>
           <div class = base_change id = base_change_0>  </div>
@@ -72,39 +87,42 @@
           <div class = register id = "V"></div>
         </div>
       </div>
-    </div>
-    <div id="line_number"></div>
-    <div id="com_ind"></div>
-    <div class = 'ex_buttons'>
-
-      <button id="step" class = 'ex_button'>
-        <div class = inside_button>
-          <div class="rectangle"></div> 
-          <div class="space"></div> 
-          <div class="triangle"></div>
-      </div>
-      </button>
-      <button id="run" class = 'ex_button'>
-        <div class = inside_button>
-          <div class="triangle"></div>
-          <div class="triangle"></div>
+      <div id="line_number"></div>
+      <div class = 'ex_buttons'>
+        <button id="step" class = 'ex_button'>
+          <div class = inside_button>
+            <div class="rectangle"></div> 
+            <div class="space"></div> 
+            <div class="triangle"></div>
         </div>
-      </button>
-      <button id="pause" class = 'ex_button'>
-        <div class = inside_button>
-          <div class="rectangle"></div> 
-          <div class="space"></div> 
-          <div class="rectangle"></div> 
-      </div>
-      </button>
-      <button id="stop" class = 'ex_button'>
-        <div class = inside_button>
-          <div class="square"></div>
+        </button>
+        <button id="run" class = 'ex_button'>
+          <div class = inside_button>
+            <div class="triangle"></div>
+            <div class="triangle"></div>
+          </div>
+        </button>
+        <button id="pause" class = 'ex_button'>
+          <div class = inside_button>
+            <div class="rectangle"></div> 
+            <div class="space"></div> 
+            <div class="rectangle"></div> 
         </div>
-      </button>
-      <div class="slider">
-        <input id = "slider" type="range" min="180" max="300" value="269">
+        </button>
+        <button id="stop" class = 'ex_button'>
+          <div class = inside_button>
+            <div class="square"></div>
+          </div>
+        </button>
+        <div class="slider">
+          <input id = "slider" type="range" min="180" max="300" value="31">
+        </div>
+      </div>
+      <div id = "timeline_container">
+        <div id = "current_time_ind"></div>
+        <div id = "timeline"></div>
       </div>
     </div>
+    
   </body>
 </html>
