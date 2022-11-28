@@ -53,4 +53,4 @@ In most use cases, the debugger should give the right result but if you find any
 
 # Can I contribute?
 
-Yes, any help is welcome! At the moment, the main goal should be to clean the goal and make it easy to add new languages.
+Yes, any help is welcome! At the moment, the main goal should be to clean the goal and make it easy to add new languages. If anybody knows how to setup github actions to automatically build the project, it would be great!
