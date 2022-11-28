@@ -9,6 +9,9 @@ function init_timeline(){
     timeline_css.style.gridTemplateColumns = "repeat(25, 50px)";
 
     for(computed_timeline = 0; computed_timeline < 25; computed_timeline++){
+        if(register[15]/4 >= code.length){
+            break;
+        }
         let line_to_show = code[ register[15]/4].join(" ")
         //Remove spaces before ,
         line_to_show = line_to_show.replace(/ ,/g, ",");
@@ -65,6 +68,9 @@ function advance_timeline(){
             execute_line();
         }
         for(let i = 0; i < backup; i++){
+            if(register[15]/4 >= code.length){
+                break;
+            }
             let line_to_show = code[ register[15]/4].join(" ")
             //Remove spaces before ,
             line_to_show = line_to_show.replace(/ ,/g, ",");

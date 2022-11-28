@@ -6,7 +6,7 @@ AssDeb is a debugger made for assembler directly inspired by Zachtronics game. A
 
  AssDeb is unlike most other debuggers in the sense that it doesn't really run the program on the machine, interupting it using system calls to get the data. AssDeb interprets himself the behaviour of the program. This has advantages and disadvantages. 
  
- The disadvantage is that the whole behaviour of the program in the debugger directly depends on AssDeb's program and on nothing else so if the programmer didn't understand the convention of an instruction, this instruction will not be executed how it should. it also adds a lot of complexity in the application given it has to contain a full interpreter of any language it wants to debug.
+ The disadvantage is that the whole behaviour of the program in the debugger directly depends on AssDeb's program and on nothing else so if the programmer didn't understand the convention of an instruction, this instruction will not be executed how it should. It also adds a lot of complexity in the application given it has to contain a full interpreter of any language it wants to debug.
 
  The advantages are the easy access to all of the memory and the fact that the program runs smoother by not having to do interuptions to speak to the OS to run and stop the program.
 
@@ -14,7 +14,7 @@ AssDeb is a debugger made for assembler directly inspired by Zachtronics game. A
 
 You can find the current release on this page: https://github.com/TheTarados/AssDeb/releases
 
-Download it, extract it and run the exe inside it. AssDeb should run!
+Download it, extract it and run the binary inside it. AssDeb should run!
 
 # How to build it?
 

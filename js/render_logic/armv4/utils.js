@@ -26,7 +26,7 @@ function immediate_solver(element){
 function address_solver(elements){
     base = get_register_value(elements[4]);
     if(elements.length < 7) return base;
-    let sign = element[6][0] == "-"
+    let sign = elements[6][0] == "-"
     sign = sign ? -1 : 1;
     offset = immediate_solver(elements[6]);
     if(elements.length < 10)
