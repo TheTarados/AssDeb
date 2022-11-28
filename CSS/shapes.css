@@ -1,0 +1,38 @@
+.rectangle{
+    float:left;
+    width  : 5px;
+    height : 20px;
+    background : #191918;
+}
+
+.space{
+    float:left;
+    width  : 3px;
+    height : 20px;
+    background : transparent;
+}
+
+.triangle{
+    float:left;
+    border-top:10px solid transparent;
+    border-bottom:10px solid transparent;
+    border-left: 17.2px solid #191918;
+    width : 0;
+}
+
+.square{
+    float:left;
+    width  : 20px;
+    height : 20px;
+    background : #191918;
+}
+
+#circle {
+    width: 12px;
+    height: 12px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+    background: red;
+    float : right;
+}

@@ -1,0 +1,70 @@
+.ex_button{
+    width : 65px;
+    height: 40px;
+    background-color: #a6a489;
+    border : solid 2px #797f6b;
+    border-radius: 6px;
+}
+
+.ex_button:disabled{
+    background-color: #797f6b;
+    border : solid 2px #797f6b;
+    border-radius: 6px;
+}
+
+.ex_button:active {
+    background-color: #797f6b;
+    border : solid 2px #191918;
+}
+
+.ex_buttons{
+    grid-row: 2;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    display : grid;
+    grid-template-columns: 70px 70px;
+    grid-template-rows: 35% 35% 20%;
+    grid-gap : 4px;
+    align-items: center;
+    justify-items: center;
+    background-color: #191918;
+}
+
+.inside_button{
+    display: flex;
+    justify-content: center;
+}
+
+.slider {
+    width: 100%;
+    height: 100%;
+    background: #797f6b;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    grid-column-start : 1;
+    grid-column-end: 3;
+}
+
+.slider input[type="range"] {
+    -webkit-appearance:none !important;
+    appearance: none !important;
+    width: 93%;
+    height: 20%;
+    background: #191918;
+    border: none;
+    border-radius: 2px;
+    outline: none;
+}
+
+.slider input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    width: 20%;
+    height: 20px;
+    background: linear-gradient(90deg, rgba(166,164,137,1) 30%, rgba(121,127,107,1) 41%, rgba(166,164,137,1) 42%, rgba(166,164,137,1) 58%, rgba(214,213,192,1) 59%, rgba(166,164,137,1) 70%);
+    border: 2px solid transparent;
+    border-radius: 5px;
+    cursor: pointer;
+}

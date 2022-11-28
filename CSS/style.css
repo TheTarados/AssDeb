@@ -1,0 +1,119 @@
+
+body{
+    background-color: #449488;
+}
+
+/*color palette: #191918 -  #a6a489- #797f6b - #40695e - #449488 */
+
+#container{
+    position: absolute;
+    left : 2px;
+    top : 2px;
+    width : calc(100vw - 4px);
+    display : grid;
+    grid-template-columns: 26px calc(145px - 26px) calc(100% - 145px - 800px - 10px) 200px 200px 400px;
+    grid-template-rows: 80% calc(20%);
+    height : calc(100% - 6px);
+    grid-gap: 2px;
+}
+
+#break_ind{
+    width: calc(145px - 26px + 100% - 145px - 800px - 10px);
+    height: 15px;
+    background-color: rgba(255, 0, 0, 0.308);
+    position: absolute;
+    left: 29px;
+}
+#com_ind{
+    width: calc(145px - 26px + 100% - 145px - 800px - 10px);
+    height: 15px;
+    background-color: rgba(255, 238, 0, 0.685);
+    position: absolute;
+    top:40px; left: 29px;
+    pointer-events: none
+}
+#error_info{
+    position: absolute;
+    top:40px; left: calc(100% - 800px - 10px);
+    width: 400px;
+    height: 40px;
+    background-color: #191918;
+    border : 3px solid #880000;
+    color : #c9c8b7;
+    border-radius: 5px;
+    z-index:3;
+}
+#text_zone{
+    grid-row: 1;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    background-color: #191918;
+    color: #c9c8b7;
+    border : 0px;
+    border-radius: 0px;
+    font-size: 14px;
+    outline : none;
+    resize: none;
+    font-family: "Cascadia Code";
+    white-space: nowrap;
+}
+
+#line_number{
+    grid-row: 1;
+    grid-column: 1;
+    color: #c9c8b7;
+    background-color: #191918;
+    font-size: 14px;
+    width: 90%;
+    padding : 5%;
+    user-select: none;
+    text-align: right;
+    float:left;
+    font-family: "Cascadia Code";
+    padding-top:calc(5% + 2px);
+    overflow:hidden;
+}
+
+.memory{
+    background-color: #191918;
+}
+
+#ram{
+    display:grid;
+    grid-auto-rows: 50px;
+    grid-template-columns: 100%;
+    align-items: center;
+    justify-items: center;
+    grid-row: 1;
+    grid-column: 5;
+    position:relative;
+    overflow-y:scroll;
+}
+
+#stack{
+    display:grid;
+    grid-auto-rows: 50px;
+    grid-template-columns: 100%;
+    align-items: center;
+    justify-items: center;
+    grid-row: 1;
+    grid-column: 4;
+    position:relative;
+    overflow-y:scroll;
+}
+
+::-webkit-scrollbar {
+    width: 13px;
+}
+
+::-webkit-scrollbar-track {
+    border: none;
+    border-radius: 2px;
+    outline: none;
+    background-clip: content-box;
+  }
+  
+::-webkit-scrollbar-thumb {
+    background: #40695e;
+}
+

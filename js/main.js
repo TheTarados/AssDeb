@@ -12,8 +12,9 @@ const createWindow = () => {
     height: 900,
     minHeight: 700,
     minWidth : 1200,
+    icon: __dirname + '/../icon.png',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: path.join(__dirname, '/preload.js'),
       contextIsolation: false,
       nodeIntegration:true
     }
@@ -26,17 +27,9 @@ const createWindow = () => {
         label: 'File',
         submenu: [
           { label: 'Open file', click: () => { mainWindow.webContents.send('Open file') } },
-          { label: 'New file' }
+          { label: 'Close file', click: () => { mainWindow.webContents.send('Close file') } },
+          { label: 'Save file', click: () => { mainWindow.webContents.send('Save file') } }
         ]
-    },
-    {
-        label: 'Edit',
-    },
-    {
-        label: 'View',
-    },
-    {
-        label: 'Run',
     }
 ]
 const menu = Menu.buildFromTemplate (template)
