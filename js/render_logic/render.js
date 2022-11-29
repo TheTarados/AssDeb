@@ -11,8 +11,10 @@ const ram_css = document.getElementById("ram");
 const stack_css = document.getElementById("stack");	
 const timeline_css = document.getElementById("timeline");	
 
+let backup_pos_com_ind = 0;
 const cst_com = 3;
 
+let com_ind_0 = cst_com;
 let code; 
 let code_lines;
 let break_points = [];
@@ -24,7 +26,7 @@ let jmp_addr = {};
 let run_through_break = true;
 let mousePosition = {x:0, y:0};
 
-com_ind.style.top = cst_com+"px";
+com_ind.style.top = "0px";
 break_ind.style.top = cst_com+"px";
 error_info.style.top = cst_com+"px";
 
@@ -140,6 +142,9 @@ break_ind.addEventListener('mouseout', function(e) {
 text_area.addEventListener("scroll", ()=>{ 
     /*Set line number's scroll to the same position as text_area*/
     line_numbers.scrollTop = text_area.scrollTop;
+    
+    com_ind_0 = cst_com-text_area.scrollTop;
+    set_to_line(backup_pos_com_ind);
   });
   
   
@@ -175,7 +180,8 @@ function update_stack_display(){
 }
 
 function set_to_line(i){
-    com_ind.style.top = (cst_com+16*i)+"px";
+    backup_pos_com_ind = i;
+    com_ind.style.top = (com_ind_0+16*i)+"px";
 }
 
 function update_line_number(){

@@ -112,6 +112,18 @@ function clean_code(){
     temp_code = temp_code.replace(/\/\*[\s\S]*?\*\//g, function(match) {
         return match.replace(/./g, ' ');
     });
+    //Remove everything between an @ and a \n
+    temp_code = temp_code.replace(/@.*\n/g, function(match) {
+        return match.replace(/./g, ' ');
+    });
+
+    //TODO: Make this understand pre run instruction
+    
+    //Remove everything between a . and a \n
+    temp_code = temp_code.replace(/\..*\n/g, function(match) {
+        return match.replace(/./g, ' ');
+    });
+
 
     //Add spaces before and after , [ and ]
     temp_code = temp_code.replace(/,/g, ' , ');

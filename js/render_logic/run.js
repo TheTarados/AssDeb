@@ -78,20 +78,6 @@ function execute_line(){
     //Get register[15]'s line of the text_area
     let elements = code[register[15]/4];
     
-    let new_elements = [];
-    for(let i = 0; i < elements.length; i++){
-        //if elements[i] contains a @
-        if(elements[i].includes("@")){
-            //Find where is the @
-            let at_index = elements[i].indexOf("@");
-            //push all until the @
-            new_elements.push(elements[i].substring(0, at_index));
-            break;
-        }else{
-            new_elements.push(elements[i]);
-        }
-    }
-    elements = new_elements;
     elements = elements.filter((line)=>{return line.length > 0 && line[0] != '\t'});
     backup_15 = register[15];
     backup_13 = register[13];
