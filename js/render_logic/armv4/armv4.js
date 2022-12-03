@@ -49,7 +49,7 @@ function setup_code(){
         //if code[i].length-1 is in op.n_arg
         let shifts = ["LSL", "LSR", "ASR", "ROR"];
         if(!op.n_arg.includes(code[i].length)){
-            show_error_message("Wrong number of arguments", code_lines[i]);
+            show_error_message("Wrong number of arguments, "+ code[i].length+ "for op "+op.name+"at line", code_lines[i]);
             break;
         }
         if(op.takes_label){//Check if every label argument to jump is valid
@@ -112,18 +112,17 @@ function clean_code(){
     temp_code = temp_code.replace(/\/\*[\s\S]*?\*\//g, function(match) {
         return match.replace(/./g, ' ');
     });
-    //Remove everything between an @ and a \n
-    temp_code = temp_code.replace(/@.*\n/g, function(match) {
-        return match.replace(/./g, ' ');
-    });
+    //Remove everything between an @ and a \n or the end of the file
+    temp_code = temp_code.replace(/@.*\n/g, '\n');
+    
 
     //TODO: Make this understand pre run instruction
     
     //Remove everything between a . and a \n
-    temp_code = temp_code.replace(/\..*\n/g, function(match) {
-        return match.replace(/./g, ' ');
-    });
+    temp_code = temp_code.replace(/\..*\n/g, '\n');
 
+    //Replace PC with R15
+    temp_code = temp_code.replace(/PC/g, 'R15');
 
     //Add spaces before and after , [ and ]
     temp_code = temp_code.replace(/,/g, ' , ');

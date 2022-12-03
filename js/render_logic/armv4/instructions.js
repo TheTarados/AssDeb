@@ -92,6 +92,7 @@ class Comp_operator extends Operator{
     constructor(name, n_args, f){
         super(name, n_args)
         this.f = f;
+        this.immediate_ok = true;
         this.execute_line = (elements)=>{
             //check if commend of the form XXXS
             if(!(elements[0].length<4 || check_conditional(elements[0].substring( 3, 5)))) return;
