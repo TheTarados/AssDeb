@@ -25,7 +25,8 @@ function setup_code(){
     code_lines = cleaned_code["temp_code_lines"];
     //First run, register all labels
     for(let i = 0; i < code.length; i++){
-        if(!operators.some((op)=> {return op.name == code[i][0].substring(0, op.n_char)})){
+        if(!operators.some((op)=> {return (op.name == code[i][0].substring(0, op.n_char))&& 
+            (code[i][0].length == op.n_char || conds.some((cond) => cond.name == code[i][0].substring(op.n_char))|| (code[i][0][op.n_char]=='s' && conds.some((cond) => cond.name == code[i][0].substring(op.n_char+1))))})){
             jmp_addr[code[i][0].replace(/:/g, " ").trim()] = i*4;
             code[i].splice(0,1);
             if(code[i].length == 0){
@@ -49,7 +50,7 @@ function setup_code(){
         //if code[i].length-1 is in op.n_arg
         let shifts = ["LSL", "LSR", "ASR", "ROR"];
         if(!op.n_arg.includes(code[i].length)){
-            show_error_message("Wrong number of arguments, "+ code[i].length+ "for op "+op.name+"at line", code_lines[i]);
+            show_error_message("Wrong number of arguments, "+ code[i].length+ " for op "+op.name+" at line ", code_lines[i]);
             break;
         }
         if(op.takes_label){//Check if every label argument to jump is valid
@@ -62,32 +63,32 @@ function setup_code(){
         else if(!op.address_arg)         
             for(let j = 1; j < code[i].length; j+=2){                                   //Check if arguments are valid
                 if(code[i][j][0] == '#' && !(j == code[i].length-1 && op.immediate_ok)){ //So only the second can be an immediate
-                    show_error_message("Immediate argument in the wrong position", code_lines[i]);
+                    show_error_message("Immediate argument in the wrong position: "+ code[i].join(" "), code_lines[i], code_lines[i]);
                     break;
                 }
                 if(code[i][j][0] != '#' && !register_names.includes(code[i][j]) 
                 && !(shifts.includes(code[i][j])&& j==code[i].length-2) && !(code[i][j]=="RRX" && j==code[i].length-1)){ 
-                    show_error_message("Argument "+code[i][j]+" which should be a register is not a register", code_lines[i]);
+                    show_error_message("Argument "+code[i][j]+" which should be a register is not a register: "+ code[i].join(" "), code_lines[i]);
                     break;
                 }
                 if(code[i][j][0] == '#' && bit_size_shifted( immediate_solver(code[i][j])) > 8){//Immediate respects bit limit
-                    show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr)", code_lines[i]);
+                    show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr): "+ code[i].join(" "), code_lines[i]);
                     break;
                 }
             }
         else{//We're in a memory instruction
             if(code[i][1][0] == '#'){
-                show_error_message("Immediate argument in the wrong position", code_lines[i]);
+                show_error_message("In memory instruction, immediate argument in the wrong position", code_lines[i]);
                 break;
             }else if(!register_names.includes(code[i][1])){ 
-                show_error_message("Argument which should be a register is not a register", code_lines[i]);
+                show_error_message("In memory instruction, argument which should be a register is not a register: "+ code[i].join(" "), code_lines[i]);
                 break;
             }
             if(code[i][4][0] == '#'){
-                show_error_message("Immediate argument in the wrong position", code_lines[i]);
+                show_error_message("In memory instruction, immediate argument in the wrong position", code_lines[i]);
                 break;
             } else if(!register_names.includes(code[i][4])){ 
-                show_error_message("Argument which should be a register is not a register", code_lines[i]);
+                show_error_message("In memory instruction, argument which should be a register is not a register : "+ code[i].join(" "), code_lines[i]);
                 break;
             }
             if(code[i].length == 8 && code[i][6][0] == '#' && bit_size( immediate_solver(code[i][6])) > 12){
@@ -128,6 +129,12 @@ function clean_code(){
     temp_code = temp_code.replace(/,/g, ' , ');
     temp_code = temp_code.replace(/\[/g, ' [ ');
     temp_code = temp_code.replace(/\]/g, ' ] ');
+
+    //replace all : by spaces
+    temp_code = temp_code.replace(/:/g, ' ');
+
+    //add a \n to eof
+    temp_code = temp_code + "\n";
 
     temp_code = temp_code.split("\n");
     temp_code = temp_code.map((line)=>{return line.replace(/\s+/g, ' ').trim()});
