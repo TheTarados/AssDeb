@@ -12,9 +12,11 @@ const stack_css = document.getElementById("stack");
 const timeline_css = document.getElementById("timeline");	
 
 let backup_pos_com_ind = 0;
+let backup_pos_error = 0;
 const cst_com = 3;
 
 let com_ind_0 = cst_com;
+let pos_error_0 = cst_com;
 let code; 
 let code_lines;
 let break_points = [];
@@ -27,8 +29,8 @@ let run_through_break = true;
 let mousePosition = {x:0, y:0};
 
 com_ind.style.top = "0px";
-break_ind.style.top = cst_com+"px";
-error_info.style.top = cst_com+"px";
+break_ind.style.top = "0px";
+error_info.style.top = "0px";
 
 com_ind.style.visibility = "hidden";
 break_ind.style.visibility = "hidden";
@@ -99,11 +101,11 @@ text_area.addEventListener('keydown', function(e) {
         this.selectionStart = this.selectionEnd = start + 1;
 
     } else if(e.ctrlKey && mouse_hover_text && code_lines!=undefined &&code_lines.length > 0){
-        let i = Math.floor((mousePosition.y-cst_com)/16);
+        let i = Math.floor((mousePosition.y-com_ind_0)/16);//(com_ind_0+16*line)+"px"
         //if code lines contains i
         if(code_lines.includes(i)){
             break_ind.style.visibility = "visible";
-            break_ind.style.top =  (cst_com+16*i)+"px"
+            break_ind.style.top =  (com_ind_0+16*i)+"px"
         }else{
             break_ind.style.visibility = "hidden";
         }
@@ -145,6 +147,7 @@ text_area.addEventListener("scroll", ()=>{
     
     com_ind_0 = cst_com-text_area.scrollTop;
     set_to_line(backup_pos_com_ind);
+    move_error_message(backup_pos_error)
   });
   
   
@@ -207,10 +210,16 @@ function update_line_number(){
 
 function show_error_message(message, line){
     error_info.style.visibility = "visible";
-    error_info.innerHTML = message + " at line " + line;
+    error_info.innerHTML = message;
     //Move the error message to the right position
-    error_info.style.top = (cst_com+16*line)+"px";
+    backup_pos_error = line;
+    error_info.style.top = (com_ind_0+16*line)+"px";
     block_buttons();
+}
+
+function move_error_message(line){
+    backup_pos_error = line;
+    error_info.style.top = (com_ind_0+16*line)+"px";
 }
 
 function block_buttons(){

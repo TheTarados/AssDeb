@@ -41,16 +41,26 @@ body{
     color: transparent;
     pointer-events: none;
 }
+#error_info_container{
+    
+    grid-row: 1;
+    grid-column-start: 4;
+    grid-column-end: 6;
+    overflow: hidden;
+    color: transparent;
+    pointer-events: none;
+}
 #error_info{
-    position: absolute;
-    top:40px; left: calc(100% - 800px - 10px);
-    width: 400px;
+    position: relative;
+    top:40px;left:0px;
+    width: calc(100%-4px);
     height: 40px;
     background-color: #191918;
     border : 3px solid #880000;
     color : #c9c8b7;
     border-radius: 5px;
-    z-index:3;
+    pointer-events: none;
+    z-index: 3;
 }
 #text_zone{
     grid-row: 1;
