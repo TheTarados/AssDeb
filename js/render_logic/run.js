@@ -1,6 +1,10 @@
+language = new Armv4();
+
 function step(run_by_loop ){
-    if(run_by_loop != true){run_by_loop = false;}
-    if(is_executing == false && (!run_by_loop)){
+    
+    if(run_by_loop != true){run_by_loop = false;} //Make sure we have a boolean here
+    if(is_executing == false && (!run_by_loop)){  //Check if we start the execution
+                                                    //!run_by_loop to avoid relanching the execution at the end of loop due to parrallelism
         is_executing = true;
         init_timeline();
         com_ind.style.visibility = "visible";
@@ -8,7 +12,7 @@ function step(run_by_loop ){
     }
     else{
         execute_line();
-        set_to_line(code_lines[register[15]/4]);
+        set_to_line(code_lines[language.get_current_line()]);
     }
 }
 
@@ -24,7 +28,7 @@ async function run(){
 }
 
 async function loop_run(){
-    while(is_executing && is_running && (!break_points[register[15]/4]||run_through_break)){
+    while(is_executing && is_running && (!break_points[language.get_current_line()]||run_through_break)){
         await sleep(slider_value);
         step(true)
         advance_timeline();
@@ -33,7 +37,7 @@ async function loop_run(){
         update_stack_display();
         run_through_break = false;
     }
-    if(break_points[register[15]/4]){
+    if(break_points[language.get_current_line()]){
         run_through_break = true;
     }
     if(!is_executing){
@@ -42,17 +46,18 @@ async function loop_run(){
 }
 
 function run_until(limit){
-    reset_state();
-    while(is_executing && (!break_points[register[15]/4]||run_through_break) && limit > 0){
+    language.reset_state();
+    while(is_executing && (!break_points[language.get_current_line()]||run_through_break) && limit > 0){
         step(true)
         run_through_break = false;
         limit--;
     }
-    set_to_line(code_lines[register[15]/4]);
+    set_to_line(code_lines[language.get_current_line()]);
+    check_and_fix_timeline();
     update_registers_display();
     update_ram_display();
     update_stack_display();
-    if(break_points[register[15]/4]){
+    if(break_points[language.get_current_line()]){
         run_through_break = true;
     }
     if(!is_executing){
@@ -64,7 +69,7 @@ function stop(){
     is_executing = false;
     is_running = false;
     com_ind.style.visibility = "hidden";
-    reset_state();
+    language.reset_state();
     reset_timeline();
     update_registers_display();
     update_ram_display();
@@ -76,25 +81,17 @@ function pause(){
 
 function execute_line(){
     //Get register[15]'s line of the text_area
-    let elements = code[register[15]/4];
+    let elements = code[language.get_current_line()];
     
     elements = elements.filter((line)=>{return line.length > 0 && line[0] != '\t'});
-    backup_15 = register[15];
-    backup_13 = register[13];
-    for (let i = 0; i < operators.length; i++)
-        if(elements[0].substring(0, operators[i].n_char) == operators[i].name){
-            operators[i].execute_line(elements);
+    language.before_execute_line();
+    for (let i = 0; i < language.get_operators().length; i++)
+        if(elements[0].substring(0, language.get_operators()[i].n_char) == language.get_operators()[i].name){
+            nzcv = language.get_operators()[i].execute_line(elements, language.get_register_values().slice(16, 20));
+            for(let j = 0; j < 4; j++){
+                language.register[16+j] = nzcv[j];
+            }
             break;
         }
-    if(backup_15 == register[15] && !did_a_jmp)
-        register[15]+=4;
-    did_a_jmp = false;
-
-    if(backup_13 != register[13]){
-        if(backup_13>register[13]){
-            stack = stack.concat(Array((backup_13-register[13])/4).fill("X"));
-        }else{
-            stack = stack.slice(0, register[13]);
-        }
-    }
+    language.after_execute_line();
 }

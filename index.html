@@ -10,10 +10,12 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>AssDeb</title>
+    <script defer src = "js/render_logic/armv4/instructions.js"></script>
+    <script defer src = "js/render_logic/generic_logic.js"></script>
+    <script defer src = "js/render_logic/armv4/armv4.js"></script>
+    <script defer src = "js/render_logic/armv5/armv5.js"></script>
     <script defer src = "js/render_logic/run.js"></script>
     <script defer src = "js/render_logic/timeline.js"></script>
-    <script defer src = "js/render_logic/armv4/armv4.js"></script>
-    <script defer src = "js/render_logic/armv4/instructions.js"></script>
     <script defer src = "js/render_logic/armv4/utils.js"></script>
     <script defer src = "js/render_logic/utils.js"></script>
     <script defer src = "js/render_logic/render.js"></script>
@@ -80,13 +82,13 @@
           <div class = base_change id = base_change_15>  </div>
         </div>
         <div class = register_container>
-          <div class = register id = "N"></div>
+          <div class = register id = "reg16"></div>
         </div><div class = register_container>
-          <div class = register id = "Z"></div>
+          <div class = register id = "reg17"></div>
         </div><div class = register_container>
-          <div class = register id = "C"></div>
+          <div class = register id = "reg18"></div>
         </div><div class = register_container>
-          <div class = register id = "V"></div>
+          <div class = register id = "reg19"></div>
         </div>
       </div>
       <div id="line_number"></div>

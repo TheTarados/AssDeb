@@ -10,6 +10,7 @@ const line_numbers = document.getElementById("line_number");
 const ram_css = document.getElementById("ram");	
 const stack_css = document.getElementById("stack");	
 const timeline_css = document.getElementById("timeline");	
+const base_changers = document.getElementsByClassName("base_change");
 
 let backup_pos_com_ind = 0;
 let backup_pos_error = 0;
@@ -23,7 +24,6 @@ let break_points = [];
 let is_executing = false;
 let is_running = false;
 let slider_value = 500;
-let ram = {};
 let jmp_addr = {};
 let run_through_break = true;
 let mousePosition = {x:0, y:0};
@@ -57,7 +57,7 @@ text_area.oninput = ()=>{
             if (err) throw err;
         });
     }
-    setup_code();
+    language.setup_code();
     update_line_number();};
 
 document.getElementById("slider").oninput = log_slider;
@@ -68,14 +68,14 @@ function log_slider(input){
 
 
 function change_base(i){
-    reg_base[i]= base_looping[reg_base[i]];
-    base_changers[i].innerHTML = "<div class=base_show id=base_show_"+i+">"+reg_base[i]+"</div>"
+    language.get_register_bases()[i]= language.base_looping[language.reg_base[i]];
+    base_changers[i].innerHTML = "<div class=base_show id=base_show_"+i+">"+language.get_register_bases()[i]+"</div>"
     update_registers_display();
     document.getElementById("base_show_"+i).onclick = ()=>{change_base(i)};
 }
 
 for (let i = 0; i < base_changers.length; i++) {
-    base_changers[i].innerHTML = "<div class=base_show id=base_show_"+i+">"+reg_base[i]+"</div>"
+    base_changers[i].innerHTML = "<div class=base_show id=base_show_"+i+">"+language.get_register_bases()[i]+"</div>"
     document.getElementById("base_show_"+i).onclick = ()=>{change_base(i)}
     
 }
@@ -156,18 +156,13 @@ text_area.addEventListener("scroll", ()=>{
 /*TODO: Value verification (not obligatory for publishing)*/
 
 function update_registers_display(){
-    for(let i = 0; i < 16; i++){
+    for(let i = 0; i < language.get_register_count(); i++){
         register_show = document.getElementById("reg"+i);
-        register_show.innerHTML = "<div class = reg_num_display>R"+i+ "</div> <div class = reg_value_display>"+register[i].toString(reg_base[i])+"</div>";
+        let val = language.get_register_values()[i];
+        val = (val=="X")?"X":(+val)
+        val = int_to_string_base(val,language.get_register_bases()[i]);
+        register_show.innerHTML = "<div class = reg_num_display>"+language.get_register_names()[i]+ "</div> <div class = reg_value_display>"+val+"</div>";
     }
-    register_show = document.getElementById("N")
-    register_show.innerHTML = "<div class = reg_num_display>N </div> <div class = reg_value_display>"+((N=="X")?"X":(+N))+"</div>";
-    register_show = document.getElementById("Z")
-    register_show.innerHTML = "<div class = reg_num_display>Z </div> <div class = reg_value_display>"+((Z=="X")?"X":(+Z))+"</div>";
-    register_show = document.getElementById("C")
-    register_show.innerHTML = "<div class = reg_num_display>C </div> <div class = reg_value_display>"+((C=="X")?"X":(+C))+"</div>";
-    register_show = document.getElementById("V")
-    register_show.innerHTML = "<div class = reg_num_display>V </div> <div class = reg_value_display>"+((V=="X")?"X":(+V))+"</div>";
 }
 
 function update_ram_display(){

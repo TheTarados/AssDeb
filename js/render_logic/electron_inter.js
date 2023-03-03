@@ -25,6 +25,22 @@ ipcRenderer.on('Open file', (event, arg) => {
 }
 )
 
+ipcRenderer.on('Select Language', (event, arg) => {
+    switch (arg) {
+        case "ArmV4":
+            language = new Armv4();
+            break;
+        case "ArmV5":
+            language = new Armv5();
+
+            break;
+        default:
+            break;
+    }
+    language.setup_code();
+}
+)
+
 ipcRenderer.on('Close file', (event, arg) => {
     text_area.value = "";
     update_line_number();

@@ -1,3 +1,21 @@
+function get_unsigned_value(x){
+    return (x>>>1)*2+(x&1)
+}
+
+function get_signed_value(x){
+    return x&0xFFFFFFFF;
+}
+
+function int_to_string_base(x, base){
+    if(base == "u"){ 
+        return get_unsigned_value(x).toString(10);
+    } else if (base == "s"){
+        return get_signed_value(x).toString(10);
+    } else {
+        return x.toString(base);
+    }
+}
+
 function bit_size_shifted(num){
     //Distance between highest bit and lowest bit
     let max = 0;
