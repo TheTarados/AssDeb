@@ -1,0 +1,43 @@
+main:
+ push	{fp}		; (str fp, [sp, #-4]!)
+ add	fp, sp, #0
+ sub	sp, sp, #12
+ ldr	r3, [pc, #136]	; 9c <main+0x9c>
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ mov	r2, r3
+ mul	r2, r3, r2
+ mov	r3, r2
+ str	r3, [fp, #-8]
+ ldr	r2, [fp, #-8]
+ ldr	r3, [pc, #108]	; a0 <main+0xa0>
+ add	r3, r2, r3
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ add	r3, r3, #56832	; 0xde00
+ add	r3, r3, #173	; 0xad
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ asr	r3, r3, #2
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ lsl	r3, r3, #3
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ eor	r3, r3, #65280	; 0xff00
+ eor	r3, r3, #255	; 0xff
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ bic	r3, r3, #-16777216	; 0xff000000
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ orr	r3, r3, #240	; 0xf0
+ str	r3, [fp, #-8]
+ ldr	r3, [fp, #-8]
+ mov	r0, r3
+ add	sp, fp, #0
+ pop	{fp}		; (ldr fp, [sp], #4)
+b end
+ .word	0x0000a16f
+ .word	0xffef0bb9
+end: mov r0, r0

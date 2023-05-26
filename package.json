@@ -4,7 +4,7 @@
   "description": "An assembler debugger",
   "main": "js/main.js",
   "scripts": {
-    "test": "test",
+    "test": "jest",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make"
@@ -17,7 +17,9 @@
     "@electron-forge/maker-rpm": "^6.0.0",
     "@electron-forge/maker-squirrel": "^6.0.0",
     "@electron-forge/maker-zip": "^6.0.0",
-    "electron": "^21.3.1"
+    "electron": "^21.3.1",
+    "jest": "^29.5.0",
+    "jest-electron": "^0.1.12"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",

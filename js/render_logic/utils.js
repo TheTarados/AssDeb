@@ -1,8 +1,10 @@
 function get_unsigned_value(x){
+    if (x == "X") return "X";
     return (x>>>1)*2+(x&1)
 }
 
 function get_signed_value(x){
+    if (x == "X") return "X";
     return x&0xFFFFFFFF;
 }
 
@@ -12,7 +14,7 @@ function int_to_string_base(x, base){
     } else if (base == "s"){
         return get_signed_value(x).toString(10);
     } else {
-        return x.toString(base);
+        return get_unsigned_value(x).toString(base);
     }
 }
 
@@ -49,3 +51,5 @@ function bit_size(num){
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+module.exports = {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep};

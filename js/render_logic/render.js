@@ -1,3 +1,8 @@
+let {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep} = require('./js/render_logic/utils.js');
+let { step, run, run_until, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
+var {init_timeline, reset_timeline, advance_timeline, check_and_fix_timeline, timeline_index, computing_timeline} = require("./js/render_logic/timeline.js");
+
+let jest = false;
 const step_button = document.getElementById("step");
 const run_button = document.getElementById("run");
 const pause_button = document.getElementById("pause");
@@ -18,13 +23,10 @@ const cst_com = 3;
 
 let com_ind_0 = cst_com;
 let pos_error_0 = cst_com;
-let code; 
-let code_lines;
-let break_points = [];
-let is_executing = false;
+
+
 let is_running = false;
 let slider_value = 500;
-let jmp_addr = {};
 let run_through_break = true;
 let mousePosition = {x:0, y:0};
 
@@ -38,16 +40,16 @@ error_info.style.visibility = "hidden";
 let mouse_hover_text = false;
 
 step_button.onclick = ()=>{
-    let backup = is_executing;
-    step(); 
+    let backup = get_executing();
+    step(false, language); 
     if(backup)
-        advance_timeline();
+        advance_timeline(language);
     update_registers_display();
     update_ram_display();
     update_stack_display();
 };
 
-run_button.onclick = run;
+run_button.onclick = ()=>run(language);
 pause_button.onclick = pause;
 stop_button.onclick = stop;
 
@@ -57,7 +59,10 @@ text_area.oninput = ()=>{
             if (err) throw err;
         });
     }
-    language.setup_code();
+    
+    unblock_buttons();
+    error_info.style.visibility = "hidden";
+    language.setup_code(text_area.value);
     update_line_number();};
 
 document.getElementById("slider").oninput = log_slider;
@@ -100,10 +105,10 @@ text_area.addEventListener('keydown', function(e) {
         // put caret at right position again
         this.selectionStart = this.selectionEnd = start + 1;
 
-    } else if(e.ctrlKey && mouse_hover_text && code_lines!=undefined &&code_lines.length > 0){
+    } else if(e.ctrlKey && mouse_hover_text && language.get_area_line_list()!=undefined &&language.get_area_line_list().length > 0){
         let i = Math.floor((mousePosition.y-com_ind_0)/16);//(com_ind_0+16*line)+"px"
         //if code lines contains i
-        if(code_lines.includes(i)){
+        if(language.get_area_line_list().includes(i)){
             break_ind.style.visibility = "visible";
             break_ind.style.top =  (com_ind_0+16*i)+"px"
         }else{
@@ -115,8 +120,8 @@ text_area.addEventListener('keydown', function(e) {
 break_ind.addEventListener("click", function(){
     let i = Math.floor((mousePosition.y-cst_com)/16);
     //index of i in code_lines
-    let index = code_lines.indexOf(i);
-    break_points[index] = !break_points[index];
+    let index = language.get_area_line_list().indexOf(i);
+    language.invert_break_points(index);
     update_line_number();
 });
 
@@ -159,7 +164,7 @@ function update_registers_display(){
     for(let i = 0; i < language.get_register_count(); i++){
         register_show = document.getElementById("reg"+i);
         let val = language.get_register_values()[i];
-        val = (val=="X")?"X":(+val)
+        val = (val=="X")?"X":+val;
         val = int_to_string_base(val,language.get_register_bases()[i]);
         register_show.innerHTML = "<div class = reg_num_display>"+language.get_register_names()[i]+ "</div> <div class = reg_value_display>"+val+"</div>";
     }
@@ -167,14 +172,14 @@ function update_registers_display(){
 
 function update_ram_display(){
     ram_css.innerHTML = "";
-    if(ram == {}) return;
-    for(let i = 0 ; i < Object.keys(ram).length; i++)
-        ram_css.innerHTML += "<div class = register_container><div class = register grid-row = "+(i+1)+"><div class = reg_num_display>"+ Object.keys(ram)[i]+"</div><div class = reg_value_display>"+Object.values(ram)[i]+"</div></div>";
+    if(language.ram == {}) return;
+    for(let i = 0 ; i < Object.keys(language.get_ram()).length; i++)
+        ram_css.innerHTML += "<div class = register_container><div class = register grid-row = "+(i+1)+"><div class = reg_num_display>"+ Object.keys(language.get_ram())[i]+"</div><div class = reg_value_display>"+Object.values(language.get_ram())[i]+"</div></div>";
 }
 function update_stack_display(){
     stack_css.innerHTML = "";
-    for(let i = 0 ; i < stack.length; i++)
-        stack_css.innerHTML += "<div class = register_container><div class = register grid-row = "+(i+1)+"><div class = reg_num_display>"+ (-i)+"</div><div class = reg_value_display>"+((stack[i]=="X")?"X":stack[i])+"</div></div>";
+    for(let i = 0 ; i < language.get_stack().length; i++)
+        stack_css.innerHTML += "<div class = register_container><div class = register grid-row = "+(i+1)+"><div class = reg_num_display>"+ (-i)+"</div><div class = reg_value_display>"+((language.get_stack()[i]=="X")?"X":language.get_stack()[i])+"</div></div>";
 }
 
 function set_to_line(i){
@@ -183,23 +188,23 @@ function set_to_line(i){
 }
 
 function update_line_number(){
-    if(is_executing){
-        stop()
+    if(get_executing()){
+        stop();
     }
     line_numbers.innerHTML = ""
     let k = 0;
-    for(let i = 0; k < code_lines.length; i++){
-        if(code_lines[k] == i && break_points[k] == false){
+    for(let i = 0; k < language.get_area_line_list().length; i++){
+        if(language.get_area_line_list()[k] == i && language.get_break_points(k) == false){
             line_numbers.innerHTML += k + "<br>";
             k++;
-        }else if( code_lines[k] == i && break_points[k] == true){
+        }else if( language.get_area_line_list()[k] == i && language.get_break_points(k) == true){
             line_numbers.innerHTML +=   "<div id=circle></div> <br>";
             k++;
         }
         else
             line_numbers.innerHTML += "<br>";
     }
-    for(let i = 0 ; i < text_area.value.split("\n").length - code_lines.length; i++)
+    for(let i = 0 ; i < text_area.value.split("\n").length - language.get_area_line_list().length; i++)
         line_numbers.innerHTML += "<br>";	
 }
 

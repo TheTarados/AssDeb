@@ -1,10 +1,12 @@
 let opened_file = null;
 //Create ipcrenderer
-const { ipcRenderer } = require('electron')
+const { ipcRenderer, clipboard } = require('electron')
 //Require dialog
 const remote = require('@electron/remote');
 const { dialog } = remote;
 var fs = require('fs'); // Load the File System to execute our common tasks (CRUD)
+const Armv4 = require('./js/render_logic/armv4/armv4.js');
+const Armv5 = require('./js/render_logic/armv5/armv5.js');
 const fsPromises = require('fs').promises;
 //Listen to event "Open file" from main.js
 ipcRenderer.on('Open file', (event, arg) => {
@@ -25,6 +27,7 @@ ipcRenderer.on('Open file', (event, arg) => {
 }
 )
 
+language = new Armv4();
 ipcRenderer.on('Select Language', (event, arg) => {
     switch (arg) {
         case "ArmV4":
@@ -37,10 +40,16 @@ ipcRenderer.on('Select Language', (event, arg) => {
         default:
             break;
     }
-    language.setup_code();
+    
+    unblock_buttons();
+    error_info.style.visibility = "hidden";
+    language.setup_code(text_area.value);
 }
 )
-
+ipcRenderer.on('Hex to Clipboard', (event, arg) => {
+    clipboard.writeText(language.get_hex(text_area.value));
+}
+)
 ipcRenderer.on('Close file', (event, arg) => {
     text_area.value = "";
     update_line_number();
