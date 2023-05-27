@@ -970,7 +970,7 @@ class armv4_Operator_Lists{
             throw "Word operator should not be executed, will lead to error in true implementation";
             return nzcv;};
         word_operator.to_hex = (elements, line_index)=>{
-            return parseInt(elements[1], 16).toString(16).toUpperCase();
+            return parseInt(elements[1], 16).toString(16).toUpperCase().padStart(8, "0");
         };
         this.operators = [word_operator,
                           nop_operator,

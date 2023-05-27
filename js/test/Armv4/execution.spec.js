@@ -26,7 +26,7 @@ test('Test basic code execution', () => {
   
   test('Test more complex code', () => {
     let language = new Armv4();
-    let reference_input =  fs.readFileSync("js\\test\\Armv4\\codes\\mult", 'utf8');
+    let reference_input =  fs.readFileSync("js/test/Armv4/codes/mult", 'utf8');
     language.setup_code(reference_input);
     run(language);
 
@@ -35,7 +35,7 @@ test('Test basic code execution', () => {
   });
   test('Test with a recursive code (Syracuse computation)', () => {
       let language = new Armv4();
-      let reference_input =  fs.readFileSync("js\\test\\Armv4\\codes\\syracuse", 'utf8');
+      let reference_input =  fs.readFileSync("js/test/Armv4/codes/syracuse", 'utf8');
       language.setup_code(reference_input);
       run(language);
   
