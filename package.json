@@ -17,9 +17,8 @@
     "@electron-forge/maker-rpm": "^6.0.0",
     "@electron-forge/maker-squirrel": "^6.0.0",
     "@electron-forge/maker-zip": "^6.0.0",
-    "electron": "^21.3.1",
-    "jest": "^29.5.0",
-    "jest-electron": "^0.1.12"
+    "electron": "^24.4.0",
+    "jest": "^29.5.0"
   },
   "dependencies": {
     "@electron/remote": "^2.0.8",
