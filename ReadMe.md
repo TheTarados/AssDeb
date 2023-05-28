@@ -12,9 +12,11 @@ The advantages are the easy access to all of the memory and the fact that the pr
 
 # How to download it?
 
-You can find the current release on this page: https://github.com/TheTarados/AssDeb/releases.
+For Mac OS, as code signing is necessary to run a program and I don't want to pay for it, you will have to build it yourself. See the next section for more information.
 
-Download it, extract it and run the binary inside it. AssDeb should run!
+For Windows and Linux users, you can find the current release on this page: https://github.com/TheTarados/AssDeb/releases.
+
+Download it, extract it and run the binary assdeb(.exe) inside it. AssDeb should run!
 
 # How to build it?
 
@@ -40,8 +42,10 @@ AssDeb has 6 zones.
 
 The only menu in the bar on the top of the window is the file menu which lets you:
 - Open a file, in which case its content will show in the text area.
-- Save a file, in which case the content of the text area can be written to a file.
 - Close the file. This will clear the text area and reset the auto-save path.
+- Save a file, in which case the content of the text area can be written to a file.
+- Select a language, which is a WIP feature to support more than ArmV4.
+- Generate the Hex of the current code and put it in your clipboard.
 
 This auto-save is a feature where, upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will thus stop this synchronization.
 
@@ -53,4 +57,4 @@ In most use cases, the debugger should give the right result but if you find any
 
 # Can I contribute?
 
-Yes, any help is welcome! At the moment, the main goal should be to clean the code and make it easy to add new languages. If anybody knows how to setup GitHub actions to automatically build the project, it would be great!
+Yes, any help is welcome! Don't hesistate to contact me to know how you could add to this project.
