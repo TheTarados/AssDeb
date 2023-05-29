@@ -126,23 +126,25 @@ class Armv4 extends Generic_logic {
     }
     
     post_index_solver(elements){
-        base = this.get_register_value(elements[4]);
+        let base = this.get_register_value(elements[4]);
         let sign = elements[7][0] == "-";
+        let offset = 0;
         if (sign)
-            offset = this.immediate_solver(elements[6].substring(1));
+            offset = this.immediate_solver(elements[7].substring(1));
         else
-            offset = this.immediate_solver(elements[6]);
+            offset = this.immediate_solver(elements[7]);
         sign = sign ? -1 : 1;
-        if(elements[7] == "]")//Case like STR R0, [R0, R1]
+        console.log(base, sign, offset);
+        if(elements.length == 8)//Case like STR R0, [R0], R1
             return base + sign * offset;
         
-        //Commenting this until I find out what it is meant to do.
-        //if(elements.length<11)//What case does this take into account?  
-        //    return base + sign * ((offset>>>1) | (C<<31));
+        if(elements.length == 10)//RRX case STR R0, [R0], R1, RRX
+            return base + sign * ((offset>>>1) | (C<<31));
     
-        //Taking into account all cases like STR R0, [R0, R1, LSL #2]
-        let shift = this.immediate_solver(elements[9]);
-        let shift_type = elements[8];
+        //Taking into account all cases like STR R0, [R0], R1, LSL #2
+        
+        let shift = this.immediate_solver(elements[10]);
+        let shift_type = elements[9];
         if(shift_type == "LSL")
             return base + sign * (offset<<shift);
         else if(shift_type == "LSR")

@@ -62,8 +62,10 @@ text_area.oninput = ()=>{
     
     unblock_buttons();
     error_info.style.visibility = "hidden";
+    can_gen_hex = true;
     language.setup_code(text_area.value);
-    update_line_number();};
+    update_line_number();
+};
 
 document.getElementById("slider").oninput = log_slider;
 
@@ -214,6 +216,7 @@ function show_error_message(message, line){
     //Move the error message to the right position
     backup_pos_error = line;
     error_info.style.top = (com_ind_0+16*line)+"px";
+    can_gen_hex = false;
     block_buttons();
 }
 

@@ -73,7 +73,7 @@ body{
     font-size: 14px;
     outline : none;
     resize: none;
-    font-family: "Cascadia Code";
+    font-family: "Source Code Pro";
     white-space: nowrap;
 }
 
@@ -88,7 +88,7 @@ body{
     user-select: none;
     text-align: right;
     float:left;
-    font-family: "Cascadia Code";
+    font-family: "Source Code Pro";
     padding-top:calc(5% + 2px);
     overflow:hidden;
 }

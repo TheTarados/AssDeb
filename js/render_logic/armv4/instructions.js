@@ -407,6 +407,7 @@ class armv4_Condition{
 
 class armv4_Memory_operator extends armv4_Operator{
     constructor(name, f, language){
+        //4 is the case LDR R0, label
         //6 is the case LDR R0, [R1]
         //8 is the case LDR R0, [R1, R2]
         //9 is the case LDR R0, [R1, R2]!
@@ -449,6 +450,7 @@ class armv4_Memory_operator extends armv4_Operator{
             this.language.get_register_values()[parseInt(elements[4].substring(1), 10)] = addr;
         }
         else if(elements[elements.length-1] != "]"){//Post-index: Case LDR R0, [R1], R2 (, LSL #2)
+            console.log(this.language.post_index_solver(elements));
             this.language.get_register_values()[parseInt(elements[4].substring(1), 10)] = this.language.post_index_solver(elements);
         }
         return nzcv;
@@ -500,25 +502,43 @@ class armv4_Memory_operator extends armv4_Operator{
         let pre_indexing = last_elem == "!";
         let post_indexing = last_elem != "]" && !pre_indexing;
         
-        let I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
-        let U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
+        let arg_is_label = elems.length ==4;
+        let U = 0;
+        let I = 0;
+        let offset = 0;
+        if(arg_is_label){
+            offset = language.jmp_addr[elems[3]] - line_index*4-8;
+            U = offset >= 0;
+            I = true;
+        }
+        else{
+            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
+            I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
+        }
+
         let P = !post_indexing;
         let W = pre_indexing;
     
         bin += I? "0":"1"; //Not I
         bin += P? "1":"0"; //P
-        bin += U? "1":"0"; //U
+        bin += U? "1":"0"; //U says if add or subtract offset
         bin += B? "1":"0"; //B
         bin += W? "1":"0"; //W
         bin += L? "1":"0"; //L
     
         //Rn
-        bin += parseInt(elems[4].substring(1)).toString(2).padStart(4, "0");
+        bin += arg_is_label? "1111":  parseInt(elems[4].substring(1)).toString(2).padStart(4, "0");
     
         //Rd
         bin += parseInt(elems[1].substring(1)).toString(2).padStart(4, "0");
         //Offset
-        if(elems.length == 6){
+        if(arg_is_label){//label
+            //Compute offset from PC
+            offset = Math.abs(offset);
+            bin += (offset/4).toString(2).padStart(12, "0");
+
+
+        }else if(elems.length == 6){//No shift on base register
             bin += "000000000000";
         }
         else if(!I){
@@ -547,7 +567,7 @@ class armv4_Memory_operator extends armv4_Operator{
             //imm12
             let imm12 = this.language.immediate_solver(elems[post_indexing?7:6]);
             //abs
-            imm12 = Math.abs(imm12);
+            imm12 = Math.abs(imm12);//abs because U already contains sign
             bin += imm12.toString(2).padStart(12, "0");
         }
         //Doing two 16 bit hex numbers to avoid overflows
@@ -565,8 +585,20 @@ class armv4_Memory_operator extends armv4_Operator{
         let pre_indexing = last_elem == "!";
         let post_indexing = last_elem != "]" && !pre_indexing;
     
-        let I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
-        let U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
+        let arg_is_label = elems.length ==4;
+        let U = 0;
+        let I = 0;
+        let offset = 0;
+        if(arg_is_label){
+            offset = language.jmp_addr[elems[3]] - line_index*4-8;
+            U = offset >= 0;
+            I = true;
+        }
+        else{
+            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
+            I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
+        }
+        
         let P = !post_indexing;
         let W = pre_indexing;
     
@@ -577,11 +609,16 @@ class armv4_Memory_operator extends armv4_Operator{
         bin += L? "1":"0"; //L
     
         //Rn
-        bin += parseInt(elems[4].substring(1)).toString(2).padStart(4, "0");
+        bin += arg_is_label? "1111":  parseInt(elems[4].substring(1)).toString(2).padStart(4, "0");
     
         //Rd
         bin += parseInt(elems[1].substring(1)).toString(2).padStart(4, "0");
-        if(elems.length == 6){
+        //Offset
+        if(arg_is_label){//label
+            //Compute offset from PC
+            offset = Math.abs(offset)/4;
+            bin += (offset>>4).toString(2).padStart(8, "0");
+        }else if(elems.length == 6){
             bin += "0000";
         }else if(I){
             //imm8
@@ -595,7 +632,11 @@ class armv4_Memory_operator extends armv4_Operator{
         bin+= "1";
         bin+= {"STRH": "01", "LDRH": "01", "LDRSB": "10", "LDRSH": "11"}[elems[0]];
         bin += "1";
-        if(elems.length == 6){
+        
+        if(arg_is_label){//label
+            //Compute offset from PC
+            bin += (offset&0xF).toString(2).padStart(8, "0");
+        }else if(elems.length == 6){
             bin += "0000";
         }else if(I==1){
             //imm8

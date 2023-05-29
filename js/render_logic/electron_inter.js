@@ -8,6 +8,9 @@ var fs = require('fs'); // Load the File System to execute our common tasks (CRU
 const Armv4 = require('./js/render_logic/armv4/armv4.js');
 const Armv5 = require('./js/render_logic/armv5/armv5.js');
 const fsPromises = require('fs').promises;
+
+var can_gen_hex = true;
+
 //Listen to event "Open file" from main.js
 ipcRenderer.on('Open file', (event, arg) => {
     //Open file dialog
@@ -47,6 +50,9 @@ ipcRenderer.on('Select Language', (event, arg) => {
 }
 )
 ipcRenderer.on('Hex to Clipboard', (event, arg) => {
+    if(!can_gen_hex){
+        throw "Can't generate hex";
+    }
     clipboard.writeText(language.get_hex(text_area.value));
 }
 )
