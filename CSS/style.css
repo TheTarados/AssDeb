@@ -18,11 +18,12 @@ body{
 }
 
 #break_ind{
-    width: calc(145px - 26px + 100% - 145px - 800px - 10px);
+    left: 1px;
+    width: 25px;
     height: 15px;
     background-color: rgba(255, 0, 0, 0.308);
     position: absolute;
-    left: 29px;
+    pointer-events: none;
 }
 #com_ind{
     width: 100%;

@@ -33,7 +33,7 @@ Download it, extract it and run the binary assdeb(.exe) inside it. AssDeb should
 # How to use AssDeb?
 
 AssDeb has 6 zones.
-1. The text area, where you can write your code. It should respect the syntax of the language.
+1. The text area, where you can write your code. It should respect the syntax of the language. On the left if the bar showing the line numbers. They are directly linked to the position in memory of the instruction. A click on the number of a line will put a breakpoint on this line. A breakpoint is a point where the program will stop when it reaches it using run. A breakpoint can be removed by clicking on it again.
 2. The stack area, showing the content of the stack.
 3. The heap area, showing the content of the heap.
 4. The register area, showing the content of the registers and of the flags.

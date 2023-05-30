@@ -38,7 +38,6 @@ error_info.style.top = "0px";
 com_ind.style.visibility = "hidden";
 break_ind.style.visibility = "hidden";
 error_info.style.visibility = "hidden";
-let mouse_hover_text = false;
 
 step_button.onclick = ()=>{
     let backup = get_executing();
@@ -108,8 +107,21 @@ text_area.addEventListener('keydown', function(e) {
         // put caret at right position again
         this.selectionStart = this.selectionEnd = start + 1;
 
-    } else if(e.ctrlKey && mouse_hover_text && language.get_area_line_list()!=undefined &&language.get_area_line_list().length > 0){
-        let i = Math.floor((mousePosition.y-com_ind_0)/line_height);
+    }
+});
+
+line_numbers.addEventListener('click', function(e) {
+    let i = Math.floor((e.clientY-cst_com)/line_height);
+    
+    //index of i in code_lines
+    let index = language.get_area_line_list().indexOf(i);
+    language.invert_break_points(index);
+    update_line_number();
+});
+
+line_numbers.addEventListener('mousemove', function(e) {
+    if(language.get_area_line_list()!=undefined &&language.get_area_line_list().length > 0){
+        let i = Math.floor((e.clientY-cst_com)/line_height);
         //if code lines contains i
         if(language.get_area_line_list().includes(i)){
             break_ind.style.visibility = "visible";
@@ -120,35 +132,15 @@ text_area.addEventListener('keydown', function(e) {
     } 
 });
 
-break_ind.addEventListener("click", function(){
-    let i = Math.floor((mousePosition.y-cst_com)/line_height);
-    //index of i in code_lines
-    let index = language.get_area_line_list().indexOf(i);
-    language.invert_break_points(index);
-    update_line_number();
+line_numbers.addEventListener('mouseout', function(e) {
+    break_ind.style.visibility = "hidden";
 });
 
 text_area.addEventListener('mouseover', function(e) {
-    //Switch mouse_hover_text  to true if we enter the text_area
-    mouse_hover_text = true;
     //focus on the text area
     text_area.focus();
 });
-break_ind.addEventListener('mouseover', function(e) {
-    //Switch mouse_hover_text to true if we enter the text_area
-    
-    mouse_hover_text = true
-    });
-text_area.addEventListener('mouseout', function(e) {
-//Switch mouse_hover_text to true if we enter the text_area
-break_ind.style.visibility = "hidden";
-    mouse_hover_text = false;
-});
-break_ind.addEventListener('mouseout', function(e) {
-    //Switch mouse_hover_text to true if we enter the text_area
-    break_ind.style.visibility = "hidden";
-        mouse_hover_text = false;
-    });
+
 text_area.addEventListener("scroll", ()=>{ 
     /*Set line number's scroll to the same position as text_area*/
     line_numbers.scrollTop = text_area.scrollTop;
@@ -201,7 +193,7 @@ function update_line_number(){
             line_numbers.innerHTML += k + "<br>";
             k++;
         }else if( language.get_area_line_list()[k] == i && language.get_break_points(k) == true){
-            line_numbers.innerHTML +=   "<div id=circle></div> <br>";
+            line_numbers.innerHTML +=   "<div id=circle_container><div id=circle></div></div> <br>";
             k++;
         }
         else

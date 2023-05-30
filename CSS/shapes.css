@@ -35,4 +35,13 @@
     border-radius: 6px;
     background: red;
     float : right;
+    vertical-align: middle;
+}
+
+#circle_container{
+    width: 12px;
+    height: 12px;
+    top: 3px;
+    position: relative;
+    float : right;
 }
