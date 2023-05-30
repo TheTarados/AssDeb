@@ -50,7 +50,7 @@ ipcRenderer.on('Select Language', (event, arg) => {
 
 ipcRenderer.on('Hex to Clipboard', (event, arg) => {
     if(!can_gen_hex){
-        dialog.showErrorBox("Can't generate hex", "We have dected errors in your code. Please fix them before you try to generate hex.");
+        dialog.showErrorBox("Can't generate hex", "We have detected errors in your code. Please fix them before you try to generate hex.");
         throw "Can't generate hex";
     }
     clipboard.writeText(language.get_hex(text_area.value));
@@ -58,7 +58,7 @@ ipcRenderer.on('Hex to Clipboard', (event, arg) => {
 
 ipcRenderer.on('Hex to File', (event, arg) => {
     if(!can_gen_hex){
-        dialog.showErrorBox("Can't generate hex", "We have dected errors in your code. Please fix them before you try to generate hex.");
+        dialog.showErrorBox("Can't generate hex", "We have detected errors in your code. Please fix them before you try to generate hex.");
         throw "Can't generate hex";
     }
     dialog.showSaveDialog().then((path) => {
