@@ -1,0 +1,3 @@
+{
+  "modulePathIgnorePatterns": ["<rootDir>/out/"]
+}

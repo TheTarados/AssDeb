@@ -19,11 +19,12 @@ const base_changers = document.getElementsByClassName("base_change");
 
 let backup_pos_com_ind = 0;
 let backup_pos_error = 0;
-const cst_com = 3;
+const cst_com = 5;
 
 let com_ind_0 = cst_com;
 let pos_error_0 = cst_com;
 
+let line_height = 18;
 
 let is_running = false;
 let slider_value = 500;
@@ -108,11 +109,11 @@ text_area.addEventListener('keydown', function(e) {
         this.selectionStart = this.selectionEnd = start + 1;
 
     } else if(e.ctrlKey && mouse_hover_text && language.get_area_line_list()!=undefined &&language.get_area_line_list().length > 0){
-        let i = Math.floor((mousePosition.y-com_ind_0)/16);//(com_ind_0+16*line)+"px"
+        let i = Math.floor((mousePosition.y-com_ind_0)/line_height);
         //if code lines contains i
         if(language.get_area_line_list().includes(i)){
             break_ind.style.visibility = "visible";
-            break_ind.style.top =  (com_ind_0+16*i)+"px"
+            break_ind.style.top =  (com_ind_0+line_height*i)+"px"
         }else{
             break_ind.style.visibility = "hidden";
         }
@@ -120,7 +121,7 @@ text_area.addEventListener('keydown', function(e) {
 });
 
 break_ind.addEventListener("click", function(){
-    let i = Math.floor((mousePosition.y-cst_com)/16);
+    let i = Math.floor((mousePosition.y-cst_com)/line_height);
     //index of i in code_lines
     let index = language.get_area_line_list().indexOf(i);
     language.invert_break_points(index);
@@ -186,7 +187,7 @@ function update_stack_display(){
 
 function set_to_line(i){
     backup_pos_com_ind = i;
-    com_ind.style.top = (com_ind_0+16*i)+"px";
+    com_ind.style.top = (com_ind_0+line_height*i)+"px";
 }
 
 function update_line_number(){
@@ -215,14 +216,14 @@ function show_error_message(message, line){
     error_info.innerHTML = message;
     //Move the error message to the right position
     backup_pos_error = line;
-    error_info.style.top = (com_ind_0+16*line)+"px";
+    error_info.style.top = (com_ind_0+line_height*line)+"px";
     can_gen_hex = false;
     block_buttons();
 }
 
 function move_error_message(line){
     backup_pos_error = line;
-    error_info.style.top = (com_ind_0+16*line)+"px";
+    error_info.style.top = (com_ind_0+line_height*line)+"px";
 }
 
 function block_buttons(){

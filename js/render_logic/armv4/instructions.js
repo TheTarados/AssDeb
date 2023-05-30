@@ -512,8 +512,8 @@ class armv4_Memory_operator extends armv4_Operator{
             I = true;
         }
         else{
-            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
             I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
+            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
         }
 
         let P = !post_indexing;
@@ -595,8 +595,8 @@ class armv4_Memory_operator extends armv4_Operator{
             I = true;
         }
         else{
-            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
             I =  elems.length == 6? true: elems[post_indexing?7:6][0]=="#";
+            U = elems.length == 6? true:elems[post_indexing?7:6][I?1:0]!="-";
         }
         
         let P = !post_indexing;
