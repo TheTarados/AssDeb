@@ -1,6 +1,6 @@
 
 
-let {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep} = require('../utils.js');
+let {get_unsigned_value, bit_size_shifted} = require('../utils.js');
 class armv4_Operator{
     constructor(name, n_args, language){
         this.name = name;

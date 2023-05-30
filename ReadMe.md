@@ -40,12 +40,15 @@ AssDeb has 6 zones.
 5. The button area, where you can interact with the execution of your program. The buttons are step, run, pause and stop. The slider under it manages the speed of the run state, left being slow and right being fast.
 6. The timeline, where you can see what instruction the program executed in past steps, and what it will execute in future steps. A click on one of the instruction will make the program change to the corresponding state.
 
-The only menu in the bar on the top of the window is the file menu which lets you:
+The File menu in the bar on the top of the window lets you:
 - Open a file, in which case its content will show in the text area.
 - Close the file. This will clear the text area and reset the auto-save path.
 - Save a file, in which case the content of the text area can be written to a file.
-- Select a language, which is a WIP feature to support more than ArmV4.
+- Select a language, which is a WIP feature to support more than ArmV4. (Armv5 is not functional yet.)
+
+The Hex menu in the bar on the top of the window lets you:
 - Generate the Hex of the current code and put it in your clipboard.
+- Generate the Hex of the current code and put it in a file.
 
 This auto-save is a feature where, upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will thus stop this synchronization.
 

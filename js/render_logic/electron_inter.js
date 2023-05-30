@@ -27,8 +27,7 @@ ipcRenderer.on('Open file', (event, arg) => {
             }).then(()=>{update_line_number()})
         })
     
-}
-)
+})
 
 language = new Armv4();
 ipcRenderer.on('Select Language', (event, arg) => {
@@ -47,15 +46,29 @@ ipcRenderer.on('Select Language', (event, arg) => {
     unblock_buttons();
     error_info.style.visibility = "hidden";
     language.setup_code(text_area.value);
-}
-)
+})
+
 ipcRenderer.on('Hex to Clipboard', (event, arg) => {
     if(!can_gen_hex){
+        dialog.showErrorBox("Can't generate hex", "We have dected errors in your code. Please fix them before you try to generate hex.");
         throw "Can't generate hex";
     }
     clipboard.writeText(language.get_hex(text_area.value));
-}
-)
+})
+
+ipcRenderer.on('Hex to File', (event, arg) => {
+    if(!can_gen_hex){
+        dialog.showErrorBox("Can't generate hex", "We have dected errors in your code. Please fix them before you try to generate hex.");
+        throw "Can't generate hex";
+    }
+    dialog.showSaveDialog().then((path) => {
+        fs.writeFile (path.filePath, language.get_hex(text_area.value), function(err) {
+            if (err) throw err;
+        });
+      }
+    );
+})
+
 ipcRenderer.on('Close file', (event, arg) => {
     text_area.value = "";
     update_line_number();

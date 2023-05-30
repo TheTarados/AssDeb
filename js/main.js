@@ -1,7 +1,7 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, ipcMain} = require('electron')
+const { app, BrowserWindow, Menu} = require('electron')
 const path = require('path')
 const remoteMain = require('@electron/remote/main');
 remoteMain.initialize();
@@ -34,15 +34,21 @@ const createWindow = () => {
             { label: 'ArmV4', click: () => { mainWindow.webContents.send('Select Language', 'ArmV4') }},
             {label: 'ArmV5', click: () => { mainWindow.webContents.send('Select Language', 'ArmV5') }}
            ] 
-          },
-          { label: 'Hex to Clipboard', click: () => { mainWindow.webContents.send('Hex to Clipboard') } }
+          }
         ]
+    },
+    {
+        label: 'Hex',
+          submenu: [
+            { label: 'Hex to Clipboard', click: () => { mainWindow.webContents.send('Hex to Clipboard') } },
+            { label: 'Hex to File', click: () => { mainWindow.webContents.send('Hex to File') } }
+          ]
     }
 ]
 const menu = Menu.buildFromTemplate (template)
 Menu.setApplicationMenu (menu)
   // Open the DevTools.
-  mainWindow.webContents.openDevTools()
+  //mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished

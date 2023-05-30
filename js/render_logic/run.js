@@ -1,4 +1,4 @@
-var {init_timeline, reset_timeline, advance_timeline, check_and_fix_timeline, timeline_index, computing_timeline} = require("./timeline.js");
+var {init_timeline, reset_timeline, advance_timeline, check_and_fix_timeline} = require("./timeline.js");
 
 let is_executing = false;
 
