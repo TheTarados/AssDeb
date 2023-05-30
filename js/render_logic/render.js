@@ -1,5 +1,5 @@
 let {int_to_string_base} = require('./js/render_logic/utils.js');
-let { step, run, stop, pause ,get_executing} = require('./js/render_logic/run.js');
+let { step, run, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
 var {advance_timeline} = require("./js/render_logic/timeline.js");
 
 let jest = false;
