@@ -1,4 +1,4 @@
-let {int_to_string_base} = require('./js/render_logic/utils.js');
+let {int_to_string_base, sleep} = require('./js/render_logic/utils.js');
 let { step, run, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
 var {advance_timeline} = require("./js/render_logic/timeline.js");
 
@@ -19,7 +19,7 @@ const base_changers = document.getElementsByClassName("base_change");
 
 let backup_pos_com_ind = 0;
 let backup_pos_error = 0;
-const cst_com = 5;
+const cst_com = 4;
 
 let com_ind_0 = cst_com;
 let pos_error_0 = cst_com;
@@ -111,7 +111,7 @@ text_area.addEventListener('keydown', function(e) {
 });
 
 line_numbers.addEventListener('click', function(e) {
-    let i = Math.floor((e.clientY-cst_com)/line_height);
+    let i = Math.floor((e.clientY-com_ind_0)/line_height);
     
     //index of i in code_lines
     let index = language.get_area_line_list().indexOf(i);
@@ -121,7 +121,7 @@ line_numbers.addEventListener('click', function(e) {
 
 line_numbers.addEventListener('mousemove', function(e) {
     if(language.get_area_line_list()!=undefined &&language.get_area_line_list().length > 0){
-        let i = Math.floor((e.clientY-cst_com)/line_height);
+        let i = Math.floor((e.clientY-com_ind_0)/line_height);
         //if code lines contains i
         if(language.get_area_line_list().includes(i)){
             break_ind.style.visibility = "visible";

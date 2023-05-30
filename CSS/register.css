@@ -84,8 +84,10 @@
     color : #191918;
     text-align: center;
     width : calc(100% - 4px);
-    height: calc(100% - 4px);
+    height: calc(100% - 0px);
     border-radius: 6px;
     background-color: #a6a489;
     user-select: none;
+    font-size: 14px;
+    font-family: "Source Code Pro";
 }
