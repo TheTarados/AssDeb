@@ -24,13 +24,15 @@ Download it, extract it and run the binary assdeb(.exe) inside it. AssDeb should
 
 2. Clone this repository.
 
-3. Run `npm install --save-dev electron` in your terminal.
+3. Run `npm install` in your terminal.
 
 4. Run `npm start` in your terminal.
 
 5. AssDeb should run!
 
 # How to use AssDeb?
+
+![](./images/Screenshot.png)
 
 AssDeb has 6 zones.
 1. The text area, where you can write your code. It should respect the syntax of the language. On the left if the bar showing the line numbers. They are directly linked to the position in memory of the instruction. A click on the number of a line will put a breakpoint on this line. A breakpoint is a point where the program will stop when it reaches it using run. A breakpoint can be removed by clicking on it again.
@@ -50,13 +52,17 @@ The Hex menu in the bar on the top of the window lets you:
 - Generate the Hex of the current code and put it in your clipboard.
 - Generate the Hex of the current code and put it in a file.
 
+The Challenge menu:
+- Open a challenge of your choice. This will switch to a layout with a description of the task at the bottom of the text area and a zone with the input/output of the tests on right of the text area. You can simply run your program to see the results. Upon completion of the tests, the timeline will be replaced with an indication of the success of the tests and the performances of your program.
+- Close the challenge and go back to the normal layout.
+
 This auto-save is a feature where, upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will thus stop this synchronization.
 
 # Is AssDeb bug-free?
 
 Most likely not and you should thus be cautious when using AssDeb. It is a good idea to run your code on another debugger if your application is critical and/or uses complicated features of the language.
 
-In most use cases, the debugger should give the right result but if you find any error, please create an issue on GitHub, showing the code which create the bug and, if possible, what GDB indicates as solution.
+In most use cases, the debugger should give the right result but if you find any error, please create an issue on GitHub, showing the code which creates the bug and, if possible, what GDB indicates as solution.
 
 # Can I contribute?
 

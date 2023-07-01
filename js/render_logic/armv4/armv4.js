@@ -7,16 +7,18 @@ class Armv4 extends Generic_logic {
         super();
         this.stack_beg = 0xBEFFFAE8;
         this.register_names = ['R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15', 'N', 'Z', 'C', 'V'];
+        this.show_register_names = ['R0', 'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9', 'R10', 'FP', 'R12', 'SP', 'LR', 'PC', 'N', 'Z', 'C', 'V'];
         this.backup_15 = null;
         this.backup_13 = null;
         this.stack = [];
         this.ram = {};
         this.did_a_jmp = false;
-        this.register = ["X","X","X","X","X","X","X","X","X","X","X",this.stack_beg,"X",this.stack_beg,"X",0,"X","X","X","X"]; //"X" implies it is not filled yet
+        this.return_address = 0xDEADBEEF;
+        this.register = ["X","X","X","X","X","X","X","X","X","X","X",this.stack_beg,"X",this.stack_beg,this.return_address,0,"X","X","X","X"]; //"X" implies it is not filled yet
         this.code = [];
         this.code_lines = [];
         this.break_points = [];
-        this.reg_base = ["s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", 16, "s", 16, "s", 4, "s", "s", "s", "s"];
+        this.reg_base = ["s", "s", "s", "s", "s", "s", "s", "s", "s", "s", "s", 16, "s", 16, 16, 4, "s", "s", "s", "s"];
         this.jmp_addr = {};
         this.base_looping = {"s": "u", "u": 16, 16 : 2, 2: 4, 4: "s"};
         this.operators_object = new armv4_Operator_Lists(this);
@@ -32,6 +34,9 @@ class Armv4 extends Generic_logic {
     }
     get_register_names(){
         return this.register_names;
+    }
+    get_show_register_names(){
+        return this.show_register_names;
     }
     get_register_values(){
         return this.register;
@@ -134,7 +139,6 @@ class Armv4 extends Generic_logic {
         else
             offset = this.immediate_solver(elements[7]);
         sign = sign ? -1 : 1;
-        console.log(base, sign, offset);
         if(elements.length == 8)//Case like STR R0, [R0], R1
             return base + sign * offset;
         
@@ -156,7 +160,7 @@ class Armv4 extends Generic_logic {
         else alert("Invalid shift type");
     }
     reset_state(){
-        this.register = ["X","X","X","X","X","X","X","X","X","X","X",this.stack_beg,"X",this.stack_beg,"X",0, "X","X","X","X"];
+        this.register = ["X","X","X","X","X","X","X","X","X","X","X",this.stack_beg,"X",this.stack_beg,this.return_address,0, "X","X","X","X"];
         this.ram = {};
         this.stack = [];
     }
@@ -387,6 +391,14 @@ class Armv4 extends Generic_logic {
     }
     invert_break_points(index){
         this.break_points[index] = !this.break_points[index];
+    }
+    get_state(){
+        return {register: [...this.register], ram: {...this.ram}, stack: [...this.stack]};
+    }
+    restore_state(state){
+        this.register = state.register;
+        this.ram = state.ram;
+        this.stack = state.stack;
     }
 }
 module.exports = Armv4;

@@ -20,7 +20,7 @@
 .ex_buttons{
     grid-row: 2;
     grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column-end: 2;
     display : grid;
     grid-template-columns: 70px 70px;
     grid-template-rows: 35% 35% 20%;

@@ -11,7 +11,7 @@ body{
     top : 2px;
     width : calc(100vw - 4px);
     display : grid;
-    grid-template-columns: 26px calc(145px - 26px) calc(100% - 145px - 800px - 10px) 200px 200px 400px;
+    grid-template-columns: calc(145px) calc(100% - 955px + 100px) 180px 180px 340px;
     grid-template-rows: 80% calc(20%);
     height : calc(100% - 6px);
     grid-gap: 2px;
@@ -33,11 +33,10 @@ body{
     top:40px; left: 0px;
     pointer-events: none;
 }
+
 #com_ind_container{
-    
     grid-row: 1;
-    grid-column-start: 2;
-    grid-column-end: 4;
+    grid-column: 2;
     overflow: hidden;
     color: transparent;
     pointer-events: none;
@@ -63,10 +62,26 @@ body{
     pointer-events: none;
     z-index: 3;
 }
+
+#text_area_container{
+    grid-row: 1;
+    grid-column-start: 1;
+    grid-column-end: 3;
+    width: 100%;
+    height: 100%;
+    color: transparent;
+    overflow: hidden;
+    display : grid;
+    grid-template-columns: 26px calc(100% - 26px);
+    grid-template-rows:    calc(100%);
+    grid-gap: 2px;
+}
+
 #text_zone{
     grid-row: 1;
-    grid-column-start: 2;
-    grid-column-end: 4;
+    grid-column: 2;
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
     background-color: #191918;
     color: #c9c8b7;
     border : 0px;
@@ -77,6 +92,40 @@ body{
     resize: none;
     font-family: "Source Code Pro";
     white-space: nowrap;
+}
+
+#in_val{
+    position: relative;
+    grid-row : 1;
+    grid-column : 3;
+    width: 100%;
+    height: 100%;
+    background-color: #191918;
+    color: #c9c8b7;
+    font-size: 16px;
+    text-align: center;
+}
+#out_val{
+    position: relative;
+    grid-row : 1;
+    grid-column : 4;
+    width: 100%;
+    height: 100%;
+    background-color: #191918;
+    color: #c9c8b7;
+    font-size: 16px;
+    text-align: center;
+}
+
+#explanation{
+    grid-row : 2;
+    grid-column-start: 1;
+    grid-column-end: 5;
+    width: 100%;
+    height: 100%;
+    background-color: #191918;
+    color: #c9c8b7;
+    font-size: 18px;
 }
 
 #line_number{
@@ -98,6 +147,7 @@ body{
 
 .memory{
     background-color: #191918;
+    padding-right: 0px;
 }
 
 #ram{
@@ -107,9 +157,9 @@ body{
     align-items: center;
     justify-items: center;
     grid-row: 1;
-    grid-column: 5;
+    grid-column: 4;
     position:relative;
-    overflow-y:scroll;
+    overflow-y:auto;
 }
 
 #stack{
@@ -119,9 +169,9 @@ body{
     align-items: center;
     justify-items: center;
     grid-row: 1;
-    grid-column: 4;
+    grid-column: 3;
     position:relative;
-    overflow-y:scroll;
+    overflow-y:auto;
 }
 
 ::-webkit-scrollbar {
@@ -139,3 +189,58 @@ body{
     background: #40695e;
 }
 
+.green{
+    background-color: #094914;
+}
+
+.red{
+    background-color: #470f0c;
+}
+
+
+.yellow{
+    background-color: #b14c0a;
+}
+
+#win_screen{
+    grid-row: 2;
+    grid-column: 2/5;
+    z-index: 3;
+    background-color: #191918;
+    visibility: hidden;
+    display: grid;
+    grid-template-columns: 33% 33% 33%;
+    grid-template-rows: 33% 66%;
+    align-items: center;
+    justify-items: center;
+}
+
+#win_text{
+    grid-row: 1;
+    grid-column: 1/4;
+    font-size: 40px;
+    color: #c9c8b7;
+    font-family: "Source Code Pro";
+    text-align: center;
+    line-height: 50px;
+}
+
+.perf_ind{
+    grid-row: 2;
+    font-size: 20px;
+    color: #c9c8b7;
+    font-family: "Source Code Pro";
+    text-align: center;
+}
+
+#mean_cycl{
+    grid-column: 1;
+}
+
+#worst_cycl{
+    grid-column: 2;
+}
+
+#numb_line{
+    grid-column: 3;
+}

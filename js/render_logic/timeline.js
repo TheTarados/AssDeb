@@ -4,6 +4,7 @@ let computing_timeline = false;
 
 function init_timeline(language){
     if(jest) return;
+    let init_backup_state = language.get_state();
     computed_timeline = 0;
     timeline_index = 0;
     timeline_css.innerHTML = "";
@@ -28,7 +29,7 @@ function init_timeline(language){
         //On click log Hi
         tim_elem.onclick = function() { animate_timeline(i);timeline_index= i;run_until(i, language);    };
     }
-    language.reset_state();
+    language.restore_state(init_backup_state);
 }
 
 function reset_timeline(){
@@ -68,9 +69,9 @@ function advance_timeline(language){
 function check_and_fix_timeline(language){
     computing_timeline = true;
     if(computed_timeline< timeline_index+13){
-        language.reset_state();
+        let backup_state = language.get_state();
         let backup = computed_timeline;
-        for(let i = 0; i < computed_timeline; i++) //Go to the end of the timeline
+        for(let i = 0; i < computed_timeline-timeline_index; i++) //Go to the end of the timeline
             execute_line(language);
         
         for(let i = 0; (i < backup) && language.get_current_line() < language.get_current_code_length(); i++){ 
@@ -89,10 +90,7 @@ function check_and_fix_timeline(language){
             tim_elem.onclick = function() { animate_timeline(i);timeline_index= i;run_until(i, language);};
         }
         timeline_css.style.gridTemplateColumns = "repeat("+computed_timeline+", 50px)";
-        language.reset_state();
-        for(let i = 0; i < timeline_index; i++){
-            execute_line(language);
-        }
+        language.restore_state(backup_state);
     }
     computing_timeline = false;
 }

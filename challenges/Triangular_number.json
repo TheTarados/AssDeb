@@ -1,0 +1,6 @@
+{
+    "Task": "You have to compute the sum of the first n numbers.",
+    "In":  [[1],[ 5],  [10],[ 20], [69]],
+    "Out": [1, 15, 55, 210, 2415 ]
+
+}

@@ -1,6 +1,6 @@
 let {int_to_string_base, sleep} = require('./js/render_logic/utils.js');
 let { step, run, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
-var {advance_timeline} = require("./js/render_logic/timeline.js");
+var {init_timeline, reset_timeline, advance_timeline} = require("./js/render_logic/timeline.js");
 
 let jest = false;
 const step_button = document.getElementById("step");
@@ -16,6 +16,20 @@ const ram_css = document.getElementById("ram");
 const stack_css = document.getElementById("stack");	
 const timeline_css = document.getElementById("timeline");	
 const base_changers = document.getElementsByClassName("base_change");
+const text_area_cont = document.getElementById("text_area_container");
+const explanation = document.getElementById("explanation");
+const in_div = document.getElementById("in_val");
+const out_div = document.getElementById("out_val");
+const win_screen = document.getElementById("win_screen");
+const win_text = document.getElementById("win_text");
+const mean_cycl_ind = document.getElementById("mean_cycl");
+const worst_cycl_ind = document.getElementById("worst_cycl");
+const numb_lines_ind = document.getElementById("numb_line");
+
+let chal_in;
+let chal_out;
+let states = [];
+let is_in_chall = false;
 
 let backup_pos_com_ind = 0;
 let backup_pos_error = 0;
@@ -161,7 +175,7 @@ function update_registers_display(){
         let val = language.get_register_values()[i];
         val = (val=="X")?"X":+val;
         val = int_to_string_base(val,language.get_register_bases()[i]);
-        register_show.innerHTML = "<div class = reg_num_display>"+language.get_register_names()[i]+ "</div> <div class = reg_value_display>"+val+"</div>";
+        register_show.innerHTML = "<div class = reg_num_display>"+language.get_show_register_names()[i]+ "</div> <div class = reg_value_display>"+val+"</div>";
     }
 }
 
@@ -232,3 +246,92 @@ function unblock_buttons(){
     pause_button.disabled = false;
 }
 
+function switch_to_challenge_mode(file){
+    text_area_cont.style.gridTemplateRows = "calc(100% - 100px) 100px";
+    text_area_cont.style.gridTemplateColumns = "26px calc(100% - 26px - 180px - 6px) 90px 90px";
+    //open json
+    let json = JSON.parse(fs.readFileSync('./challenges/'+file));
+    explanation.innerHTML = json.Task;
+    chal_in = json.In;
+    chal_out = json.Out;
+    render_inout();
+    is_in_chall = true;
+    cycle_counter = -1;
+    individual_cycle_counter = 0;
+    worst_cycle = 0;
+}
+
+function quit_challenge_mode(){
+    text_area_cont.style.gridTemplateRows = "100%";
+    text_area_cont.style.gridTemplateColumns = "26px calc(100% - 26px)";
+    is_in_chall = false;
+}
+
+function render_inout(){
+    in_str = "";
+    out_str = "";
+    for(let i = 0; i < chal_in.length; i++){
+        if(i < states.length){
+            in_str += '<span class='+(states[i]? "green": "red")+'>'
+            for(let j = 0; j < chal_in[i].length-1; j++)
+                in_str +='0x'+chal_in[i][j].toString(16) + ", "
+            in_str +='0x'+chal_in[i][chal_in[i].length-1].toString(16);
+            in_str += "</span><br>";
+            out_str += '<span class='+(states[i]? "green": "red")+'>0x'+chal_out[i].toString(16)+"</span><br>";
+        }
+        else if(i == states.length){
+            in_str += '<span class=yellow>'
+            for(let j = 0; j < chal_in[i].length-1; j++)
+                in_str +='0x'+chal_in[i][j].toString(16) + ", "
+            in_str +='0x'+chal_in[i][chal_in[i].length-1].toString(16);
+            in_str += "</span><br>";
+            out_str += '<span class=yellow>0x'+chal_out[i].toString(16)+"</span><br>";
+        }else{
+            for(let j = 0; j < chal_in[i].length-1; j++)
+                in_str +='0x'+chal_in[i][j].toString(16) + ", "
+            in_str +='0x'+chal_in[i][chal_in[i].length-1].toString(16);
+            in_str += "<br>";
+            out_str += '0x'+chal_out[i].toString(16)+"<br>";
+        }
+    }
+    in_div.innerHTML = in_str;
+    out_div.innerHTML = out_str;
+
+}
+let cycle_counter = -1;
+let individual_cycle_counter = 0;
+let worst_cycle = 0;
+function treat_output(out_val){
+    worst_cycle = Math.max(worst_cycle, individual_cycle_counter);
+    if(is_in_chall){
+        states.push(out_val == chal_out[states.length]);
+        if(states.length == chal_in.length){
+            
+            win_text.innerHTML = states.includes(false)?"You lost":"You won";
+            mean_cycl_ind.innerHTML = "Mean cycle count<br>"+Math.round(cycle_counter/chal_in.length*10)/10;
+            cycle_counter = -1;
+            worst_cycl_ind.innerHTML = "Worst cycle count<br>"+worst_cycle;
+            worst_cycle = 0;
+            numb_lines_ind.innerHTML = "Number of lines<br>"+language.get_current_code_length();
+            win_screen.style.visibility = "visible";
+            stop();
+        }
+        render_inout();
+        language.reset_state();
+        let current_input = get_input();
+        for(var i = 0; i < current_input.length; i++)
+            language.get_register_values()[i] = current_input[i];
+        reset_timeline();
+        init_timeline(language);
+        set_to_line(language.get_area_line_list()[0]);
+    
+        update_registers_display();
+        update_ram_display();
+        update_stack_display();
+    }
+}
+
+function get_input(){
+    individual_cycle_counter = 0;
+    return is_in_chall? chal_in[states.length] : [];
+}

@@ -7,6 +7,7 @@ const { dialog } = remote;
 var fs = require('fs'); // Load the File System to execute our common tasks (CRUD)
 const Armv4 = require('./js/render_logic/armv4/armv4.js');
 const Armv5 = require('./js/render_logic/armv5/armv5.js');
+const { log } = require('console');
 const fsPromises = require('fs').promises;
 
 var can_gen_hex = true;
@@ -67,6 +68,14 @@ ipcRenderer.on('Hex to File', (event, arg) => {
         });
       }
     );
+})
+
+ipcRenderer.on('Open Challenge', (event, arg) => {
+    switch_to_challenge_mode(arg);
+})
+
+ipcRenderer.on('Quit Challenge', (event, arg) => {
+    quit_challenge_mode()
 })
 
 ipcRenderer.on('Close file', (event, arg) => {

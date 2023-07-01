@@ -53,6 +53,12 @@ class Generic_logic{
     invert_break_points(index){
         throw new Error('Abstract method cannot be called.');
     };
+    get_state(){
+        throw new Error('Abstract method cannot be called.');
+    };
+    restore_state(state){
+        throw new Error('Abstract method cannot be called.');
+    };
 }
 
 

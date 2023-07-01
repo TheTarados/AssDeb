@@ -450,7 +450,6 @@ class armv4_Memory_operator extends armv4_Operator{
             this.language.get_register_values()[parseInt(elements[4].substring(1), 10)] = addr;
         }
         else if(elements[elements.length-1] != "]"){//Post-index: Case LDR R0, [R1], R2 (, LSL #2)
-            console.log(this.language.post_index_solver(elements));
             this.language.get_register_values()[parseInt(elements[4].substring(1), 10)] = this.language.post_index_solver(elements);
         }
         return nzcv;
@@ -980,20 +979,20 @@ class armv4_Operator_Lists{
         //LDM
         let ldm_operator = new armv4_Operator("LDM",  Array.from({ length: 32 }, (_, index) => index + 5), language);
         ldm_operator.execute_line = (elements, nzcv)=>{
-            console.log("LDM exection not yet implemented");
+            throw new Error("LDM exection not yet implemented");
             return nzcv;}
         ldm_operator.to_hex = ldm_to_hex;
         
         //LDMIA is the same as LDM so just copy it
         let ldmia_operator = new armv4_Operator("LDMIA",  Array.from({ length: 32 }, (_, index) => index + 5), language);
         ldmia_operator.execute_line = (elements, nzcv)=>{
-            console.log("LDMIA exection not yet implemented");
+            throw new Error("LDMIA exection not yet implemented");
             return nzcv;}
         ldmia_operator.to_hex = ldm_to_hex;
         //LDMFD is the same as LDM so just copy it
         let ldmfd_operator = new armv4_Operator("LDMFD",  Array.from({ length: 32 }, (_, index) => index + 5), language);
         ldmfd_operator.execute_line = (elements, nzcv)=>{
-            console.log("LDMFD exection not yet implemented");
+            throw new Error("LDMFD exection not yet implemented");
             return nzcv;}
         ldmfd_operator.to_hex = ldm_to_hex;
         

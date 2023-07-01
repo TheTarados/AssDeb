@@ -22,8 +22,15 @@
       <div id="break_ind"></div>
       <div id = "error_info_container"><div id="error_info"></div></div>
       
-      <div id="com_ind_container"><div id="com_ind"></div></div>
-      <textarea spellcheck="false" id="text_zone"></textarea>
+      
+      <div id="text_area_container">
+        <textarea spellcheck="false" id="text_zone"></textarea>
+        <div id="com_ind_container"><div id="com_ind"></div></div>
+        <div id="in_val"></div>
+        <div id="out_val"></div>
+        <div id="explanation"></div>
+        <div id="line_number"></div>
+      </div>
       <div class = "memory" id="ram"></div>
       <div class = "memory" id="stack"></div>
       <div class = "memory" id = "registers">
@@ -86,7 +93,6 @@
           <div class = register id = "reg19"></div>
         </div>
       </div>
-      <div id="line_number"></div>
       <div class = 'ex_buttons'>
         <button id="step" class = 'ex_button'>
           <div class = inside_button>
@@ -116,6 +122,12 @@
         <div class="slider">
           <input id = "slider" type="range" min="180" max="300" value="31">
         </div>
+      </div>
+      <div id="win_screen">
+        <div id="win_text">You lost</div>
+        <div id="mean_cycl" class="perf_ind">test<br>test</div>
+        <div id="worst_cycl" class="perf_ind">test<br>test</div>
+        <div id="numb_line" class="perf_ind">test<br>test</div>
       </div>
       <div id = "timeline_container">
         <div id = "current_time_ind"></div>

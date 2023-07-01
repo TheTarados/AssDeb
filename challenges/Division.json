@@ -1,0 +1,6 @@
+{
+    "Task": "Divide the number in R0 by the number in R1, rounded down.",
+    "In":  [[5, 2], [53, 3],  [85, 5], [120, 30], [1050, 13]],
+    "Out": [2, 17, 17, 4, 80]
+
+}

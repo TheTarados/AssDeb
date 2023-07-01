@@ -1,8 +1,9 @@
 // main.js
 
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu} = require('electron')
-const path = require('path')
+const { app, BrowserWindow, Menu} = require('electron');
+const fs = require('fs');
+const path = require('path');
 const remoteMain = require('@electron/remote/main');
 remoteMain.initialize();
 const createWindow = () => {
@@ -22,6 +23,12 @@ const createWindow = () => {
   remoteMain.enable(mainWindow.webContents)
   // and load the index.html of the app.
   mainWindow.loadFile('index.html')
+  
+  chal_submenu = [];
+  fs.readdirSync('./challenges').forEach(file => {
+    chal_submenu.push({label: file.split('.')[0], click: () => { mainWindow.webContents.send('Open Challenge', file) }});
+  });
+  
   const template = [
     {
         label: 'File',
@@ -42,6 +49,15 @@ const createWindow = () => {
           submenu: [
             { label: 'Hex to Clipboard', click: () => { mainWindow.webContents.send('Hex to Clipboard') } },
             { label: 'Hex to File', click: () => { mainWindow.webContents.send('Hex to File') } }
+          ]
+    },
+    {
+        label: 'Challenge',
+          submenu: [
+            { label: 'Challenge', 
+              submenu: chal_submenu
+            },
+            { label: 'Quit Challenge', click: () => { mainWindow.webContents.send('Quit Challenge') } }
           ]
     }
 ]
