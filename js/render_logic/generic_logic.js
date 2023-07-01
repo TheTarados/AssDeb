@@ -54,6 +54,3 @@ class Generic_logic{
         throw new Error('Abstract method cannot be called.');
     };
 }
-
-
-module.exports = Generic_logic;

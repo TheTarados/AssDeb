@@ -1,6 +1,5 @@
-let {int_to_string_base, sleep} = require('./js/render_logic/utils.js');
-let { step, run, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
-var {advance_timeline} = require("./js/render_logic/timeline.js");
+
+let language = new Armv4();
 
 let jest = false;
 const step_button = document.getElementById("step");
@@ -14,7 +13,6 @@ const text_area = document.getElementById("text_zone");
 const line_numbers = document.getElementById("line_number");
 const ram_css = document.getElementById("ram");	
 const stack_css = document.getElementById("stack");	
-const timeline_css = document.getElementById("timeline");	
 const base_changers = document.getElementsByClassName("base_change");
 
 let backup_pos_com_ind = 0;
@@ -53,13 +51,9 @@ run_button.onclick = ()=>run(language);
 pause_button.onclick = pause;
 stop_button.onclick = stop;
 
+let can_gen_hex = true;
+
 text_area.oninput = ()=>{
-    if(opened_file!=null){
-        fs.writeFile (opened_file, text_area.value, function(err) {
-            if (err) throw err;
-        });
-    }
-    
     unblock_buttons();
     error_info.style.visibility = "hidden";
     can_gen_hex = true;
@@ -157,7 +151,7 @@ text_area.addEventListener("scroll", ()=>{
 
 function update_registers_display(){
     for(let i = 0; i < language.get_register_count(); i++){
-        register_show = document.getElementById("reg"+i);
+        let register_show = document.getElementById("reg"+i);
         let val = language.get_register_values()[i];
         val = (val=="X")?"X":+val;
         val = int_to_string_base(val,language.get_register_bases()[i]);
@@ -231,4 +225,8 @@ function unblock_buttons(){
     stop_button.disabled = false;
     pause_button.disabled = false;
 }
+
+
+
+
 

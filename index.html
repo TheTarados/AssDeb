@@ -13,11 +13,28 @@
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>AssDeb</title>
-    <script defer src = "js/render_logic/electron_inter.js"></script>
-    <script defer src = "js/render_logic/render.js"></script>
+    <!--If you want to make a webpage, this is what you should not do.
+    Instead, make nice modules that you can import (What I did not do while doing my electron app)-->
+    <script defer src="js/render_logic/utils.js"></script>
+    <script defer src="js/render_logic/generic_logic.js"></script>
+    <script defer src="js/render_logic/armv4/instructions.js"></script>
+    <script defer src="js/render_logic/armv4/armv4.js"></script>
+    <script defer src="js/render_logic/timeline.js"></script>
+    <script defer src="js/render_logic/run.js"></script>
+    <script defer src ="js/render_logic/render.js"></script>
+    <script defer type="module" src ="js/render_logic/electron_inter.js"></script>
   </head>
   <body>
-    <div id="container">
+    <div id="meta-container">
+      <div id="context_menu">
+        Open File:
+        <input type="file" id="Open file" class="Context"></button>
+        <!--<button id="Armv4" class="Context">Armv5</button>
+        <button id="Armv5" class="Context">Armv5</button>-->
+        Hex to File: 
+        <input type="file"  id="Hex to File" class="Context"></button>
+      </div>
+      <div id="container">
       
       <div id="break_ind"></div>
       <div id = "error_info_container"><div id="error_info"></div></div>
@@ -121,6 +138,7 @@
         <div id = "current_time_ind"></div>
         <div id = "timeline"></div>
       </div>
+    </div>
     </div>
     
   </body>

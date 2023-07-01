@@ -1,3 +1,7 @@
+# What is this branch
+
+This is a branch aimed at making AssDeb a site. This was done in the most hacky way possible and you should not make your sites like this. This is an untestable mess because the Electron app is badly modularised. Yet... it kinda works.
+
 # What is AssDeb?
 
 AssDeb is a debugger made for assembler directly inspired by Zachtronics game. At the moment, it only supports armv4 but should be extended in the future to support other languages.

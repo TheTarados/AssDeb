@@ -1,6 +1,6 @@
 
 
-let {get_unsigned_value, bit_size_shifted} = require('../utils.js');
+
 class armv4_Operator{
     constructor(name, n_args, language){
         this.name = name;
@@ -48,9 +48,9 @@ function get_cond_bin(language, op_block){
 }
 
 
-shift_to_sh = {"LSL":"00", "LSR":"01", "ASR":"10", "ROR":"11", "RRX":"11"};
+let shift_to_sh = {"LSL":"00", "LSR":"01", "ASR":"10", "ROR":"11", "RRX":"11"};
 
-data_proc_exec = (elements, nzcv, f, language)=>{
+let data_proc_exec = (elements, nzcv, f, language)=>{
     let s = false;
     if (elements[0].length>3){
         s = elements[0][3]== "S";//check if commend of the form XXXS
@@ -227,7 +227,7 @@ class armv4_Data_proc_operator extends armv4_Operator{
     };
 }
 
-mul_exec = (elements, nzcv,f ,g)=>{
+let mul_exec = (elements, nzcv,f ,g)=>{
     //check if commend of the form XXXS
     let s = elements[0][3]== "S"||elements[0][5]== "S";
     if(!(elements[0].length<6 || this.language.check_conditional(elements[0].substring( 3+s, s+5)))) return nzcv;
@@ -1083,5 +1083,3 @@ class armv4_Operator_Lists{
         return this.conds;
     };
 };
-
-module.exports = armv4_Operator_Lists;

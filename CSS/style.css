@@ -6,9 +6,8 @@ body{
 /*color palette: #191918 -  #a6a489- #797f6b - #40695e - #449488 */
 
 #container{
-    position: absolute;
-    left : 2px;
-    top : 2px;
+    grid-row: 2;
+    position: relative;
     width : calc(100vw - 4px);
     display : grid;
     grid-template-columns: 26px calc(145px - 26px) calc(100% - 145px - 800px - 10px) 200px 200px 400px;
@@ -139,3 +138,14 @@ body{
     background: #40695e;
 }
 
+#meta-container{
+    position: absolute;
+    left : 2px;
+    top : 2px;
+    width : calc(100vw - 4px);
+    height : calc(100vh - 4px);
+    display: grid;
+    grid-template-columns: 100%;
+    grid-template-rows: 20px calc(100% - 20px);
+    grid-gap : 2px;
+}

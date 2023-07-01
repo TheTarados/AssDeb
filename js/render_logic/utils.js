@@ -51,5 +51,3 @@ function bit_size(num){
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
-
-module.exports = {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep};

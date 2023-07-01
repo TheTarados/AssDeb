@@ -1,8 +1,11 @@
-let computed_timeline = 0;
-let timeline_index = 0;
-let computing_timeline = false;
 
-function init_timeline(language){
+let computed_timeline = 0;
+ let timeline_index = 0;
+ let computing_timeline = false;
+
+const timeline_css = document.getElementById("timeline");	
+
+ function init_timeline(language){
     if(jest) return;
     computed_timeline = 0;
     timeline_index = 0;
@@ -31,7 +34,7 @@ function init_timeline(language){
     language.reset_state();
 }
 
-function reset_timeline(){
+ function reset_timeline(){
     timeline_css.innerHTML = "";
     timeline_index=0;
     computed_timeline = 0;
@@ -51,7 +54,7 @@ function animate_timeline(go_to){
     }, 1);
 }
 
-function advance_timeline(language){
+ function advance_timeline(language){
     timeline_index++;
     let delta = 50;
     //timeline_css.style.left = "calc(50% - 75px - "+(50*timeline_index)+"px)";
@@ -65,7 +68,7 @@ function advance_timeline(language){
     check_and_fix_timeline(language)
 }
 
-function check_and_fix_timeline(language){
+ function check_and_fix_timeline(language){
     computing_timeline = true;
     if(computed_timeline< timeline_index+13){
         language.reset_state();
@@ -96,4 +99,3 @@ function check_and_fix_timeline(language){
     }
     computing_timeline = false;
 }
-module.exports = {init_timeline, reset_timeline, advance_timeline, check_and_fix_timeline, timeline_index, computing_timeline};

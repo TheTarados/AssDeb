@@ -1,6 +1,3 @@
-let Generic_logic = require('../generic_logic.js');
-let armv4_Operator_Lists = require('./instructions.js');
-let {get_unsigned_value, bit_size_shifted, bit_size} = require('../utils.js');
 
 class Armv4 extends Generic_logic {
     constructor(){
@@ -389,4 +386,3 @@ class Armv4 extends Generic_logic {
         this.break_points[index] = !this.break_points[index];
     }
 }
-module.exports = Armv4;
