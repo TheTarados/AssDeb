@@ -689,9 +689,10 @@ class armv4_Operator_Lists{
 
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
+            let res_31 = (sum >> 31) & 1;
             let res_32 = (a+b)>0xFFFFFFFF;
             
-            nzcv[3] = !(a_31^b_31) && (a_31^res_32);
+            nzcv[3] = !(a_31^b_31) && (a_31^res_31);
             nzcv[2] = res_32;
             
             return sum; 
@@ -702,9 +703,10 @@ class armv4_Operator_Lists{
             if(!s) return sum;
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
+            let res_31 = (sum >> 31) & 1;
             let res_32 = sum>0xFFFFFFFF;
             
-            nzcv[3] = !(a_31^b_31) && (a_31^res_32);
+            nzcv[3] = !(a_31^b_31) && (a_31^res_31);
             nzcv[2] = res_32;
             
             return sum; 
@@ -716,9 +718,10 @@ class armv4_Operator_Lists{
             if(!s) return sum;
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
+            let res_31 = (sum >> 31) & 1;
             let res_32 = a+get_unsigned_value(not_b)+1>0xFFFFFFFF;
             
-            nzcv[3] = (a_31^b_31) & (a_31^res_32);
+            nzcv[3] = (a_31^b_31) & (a_31^res_31);
             nzcv[2] = res_32;
             return sum; 
         }, "0010", language);
@@ -732,9 +735,10 @@ class armv4_Operator_Lists{
                 
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
+            let res_31 = (sum >> 31) & 1;
             let res_32 = a+get_unsigned_value(not_b)+1>0xFFFFFFFF;
             
-            nzcv[3] = (a_31^b_31) & (a_31^res_32);
+            nzcv[3] = (a_31^b_31) & (a_31^res_31);
             nzcv[2] = res_32;
             
             return sum; 

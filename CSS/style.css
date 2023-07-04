@@ -126,6 +126,7 @@ body{
     background-color: #191918;
     color: #c9c8b7;
     font-size: 18px;
+    font: "Source Code Pro";
 }
 
 #line_number{

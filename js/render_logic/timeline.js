@@ -71,10 +71,10 @@ function check_and_fix_timeline(language){
     if(computed_timeline< timeline_index+13){
         let backup_state = language.get_state();
         let backup = computed_timeline;
-        for(let i = 0; i < computed_timeline-timeline_index; i++) //Go to the end of the timeline
+        for(let i = 0; i < computed_timeline-timeline_index && language.get_current_line() < language.get_current_code_length() &&  language.get_current_line() != 0xdeadbeef/4; i++) //Go to the end of the timeline
             execute_line(language);
         
-        for(let i = 0; (i < backup) && language.get_current_line() < language.get_current_code_length(); i++){ 
+        for(let i = 0; (i < backup) && language.get_current_line() < language.get_current_code_length() &&  language.get_current_line() != 0xdeadbeef/4 ; i++){ 
                         //<backup because we want to double the size of the timeline
          
             let line_to_show = language.get_current_code_line().join(" ");
