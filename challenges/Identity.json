@@ -1,6 +1,0 @@
-{
-    "Task": "Return as output (in R0) the value you get as input (in R0). You should follow the rules of the calling convention.",
-    "In":  [[1], [5],  [10], [100], [50000]],
-    "Out": [1, 5,  10, 100, 50000]
-
-}

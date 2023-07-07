@@ -1,0 +1,5 @@
+{
+    "Task": "Return the addition of R0 and R1 as IEEE 754 floating points numbers. You can considere all numbers as positive. Ignore special exponents. Do not handle overflow and underflow. Apply trunctation, don't do any rounding. You should create your own tests in the file challenges/5.Floating-point_addition.json following the given exemple (give values in decimal). I got it down to 17 lines. Can you do better?",
+    "In":  [[1065353216, 1073741824], [1073741824, 1065353216]],
+    "Out": [1077936128, 1077936128]
+}

@@ -1,0 +1,5 @@
+{
+    "Task": "This is a tutorial to use the challenge mode. Return as output (in R0) the value you get as input (in R0). You should follow the rules of the calling convention. What this means is that you should do 'mov pc, lr' once you have the right result in R0. You can then run the program and see if it is accepted or not.",
+    "In":  [[1], [5],  [10], [100], [50000]],
+    "Out": [1, 5,  10, 100, 50000]
+}

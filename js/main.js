@@ -26,7 +26,7 @@ const createWindow = () => {
   
   chal_submenu = [];
   fs.readdirSync('./challenges').forEach(file => {
-    chal_submenu.push({label: file.split('.')[0], click: () => { mainWindow.webContents.send('Open Challenge', file) }});
+    chal_submenu.push({label: file.split('.')[1], click: () => { mainWindow.webContents.send('Open Challenge', file) }});
   });
   
   const template = [

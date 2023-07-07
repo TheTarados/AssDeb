@@ -1,5 +1,5 @@
 let {int_to_string_base, sleep} = require('./js/render_logic/utils.js');
-let { step, run, stop, pause, execute_line ,get_executing} = require('./js/render_logic/run.js');
+let { step, run, stop, pause, execute_line ,get_executing, run_until, set_input} = require('./js/render_logic/run.js');
 var {init_timeline, reset_timeline, advance_timeline} = require("./js/render_logic/timeline.js");
 
 let jest = false;
@@ -22,8 +22,6 @@ const in_div = document.getElementById("in_val");
 const out_div = document.getElementById("out_val");
 const win_screen = document.getElementById("win_screen");
 const win_text = document.getElementById("win_text");
-const mean_cycl_ind = document.getElementById("mean_cycl");
-const worst_cycl_ind = document.getElementById("worst_cycl");
 const numb_lines_ind = document.getElementById("numb_line");
 
 let chal_in;
@@ -247,13 +245,15 @@ function unblock_buttons(){
 }
 
 function switch_to_challenge_mode(file){
-    text_area_cont.style.gridTemplateRows = "calc(100% - 100px) 100px";
-    text_area_cont.style.gridTemplateColumns = "26px calc(100% - 26px - 180px - 6px) 90px 90px";
     //open json
     let json = JSON.parse(fs.readFileSync('./challenges/'+file));
     explanation.innerHTML = json.Task;
     chal_in = json.In;
     chal_out = json.Out;
+
+    text_area_cont.style.gridTemplateRows = "calc(100% - 100px) 100px";
+    text_area_cont.style.gridTemplateColumns = "26px calc(100% - 26px - "+(chal_in[0].length*90).toString()+"px - 90px - 6px) "+(chal_in[0].length*90).toString()+"px 90px";
+    
     render_inout();
     is_in_chall = true;
     cycle_counter = -1;
@@ -308,9 +308,7 @@ function treat_output(out_val){
         if(states.length == chal_in.length){
             
             win_text.innerHTML = states.includes(false)?"You lost":"You won";
-            mean_cycl_ind.innerHTML = "Mean cycle count<br>"+Math.round(cycle_counter/chal_in.length*10)/10;
             cycle_counter = -1;
-            worst_cycl_ind.innerHTML = "Worst cycle count<br>"+worst_cycle;
             worst_cycle = 0;
             numb_lines_ind.innerHTML = "Number of lines<br>"+language.get_current_code_length();
             win_screen.style.visibility = "visible";

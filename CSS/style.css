@@ -104,6 +104,7 @@ body{
     color: #c9c8b7;
     font-size: 16px;
     text-align: center;
+    user-select: none;
 }
 #out_val{
     position: relative;
@@ -115,6 +116,7 @@ body{
     color: #c9c8b7;
     font-size: 16px;
     text-align: center;
+    user-select: none;
 }
 
 #explanation{
@@ -127,6 +129,7 @@ body{
     color: #c9c8b7;
     font-size: 18px;
     font: "Source Code Pro";
+    user-select: none;
 }
 
 #line_number{
@@ -210,7 +213,7 @@ body{
     background-color: #191918;
     visibility: hidden;
     display: grid;
-    grid-template-columns: 33% 33% 33%;
+    grid-template-columns: 100%;
     grid-template-rows: 33% 66%;
     align-items: center;
     justify-items: center;
@@ -218,12 +221,12 @@ body{
 
 #win_text{
     grid-row: 1;
-    grid-column: 1/4;
     font-size: 40px;
     color: #c9c8b7;
     font-family: "Source Code Pro";
     text-align: center;
     line-height: 50px;
+    user-select: none;
 }
 
 .perf_ind{
@@ -231,17 +234,6 @@ body{
     font-size: 20px;
     color: #c9c8b7;
     font-family: "Source Code Pro";
+    user-select: none;
     text-align: center;
-}
-
-#mean_cycl{
-    grid-column: 1;
-}
-
-#worst_cycl{
-    grid-column: 2;
-}
-
-#numb_line{
-    grid-column: 3;
 }

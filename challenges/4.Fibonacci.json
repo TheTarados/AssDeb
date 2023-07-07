@@ -1,0 +1,5 @@
+{
+    "Task": "Return the R0th Fibonacci number. (Convention is 1 for n=1 and 2). You should create your own tests in the file challenges/4.Fibonacci.json following the given exemple.",
+    "In":  [[1], [2]],
+    "Out": [1, 1]
+}
