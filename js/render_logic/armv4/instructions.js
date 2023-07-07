@@ -409,6 +409,7 @@ class armv4_Memory_operator extends armv4_Operator{
     constructor(name, f, language){
         //4 is the case LDR R0, label
         //6 is the case LDR R0, [R1]
+        //8 is the case LDR R0, [R1], R2
         //8 is the case LDR R0, [R1, R2]
         //9 is the case LDR R0, [R1, R2]!
         
