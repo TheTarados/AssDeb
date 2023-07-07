@@ -2,6 +2,13 @@ var {init_timeline, reset_timeline, advance_timeline, check_and_fix_timeline} = 
 
 let is_executing = false;
 
+function set_input(language){
+    let current_input = get_input();
+    for(var i = 0; i < current_input.length; i++)
+        language.get_register_values()[i] = current_input[i];
+
+}
+
 function step(run_by_loop, language ){
     if(!jest){
         cycle_counter +=1 ;
@@ -18,9 +25,7 @@ function step(run_by_loop, language ){
         if(!jest){
             com_ind.style.visibility = "visible";
             set_to_line(language.get_area_line_list()[0]);
-            let current_input = get_input();
-            for(var i = 0; i < current_input.length; i++)
-                language.get_register_values()[i] = current_input[i];
+            set_input(language);
         }
     }
     else{
@@ -51,12 +56,13 @@ async function run(language){
 }
 
 async function loop_run(language){
+    let acc = 1;
     while(is_executing 
         && is_running 
         && (!language.get_break_points(language.get_current_line())||run_through_break)
         && language.get_current_line() < language.get_current_code_length()
         && language.get_current_line() != 0xdeadbeef/4){
-        if(!jest)await sleep(slider_value);
+        if(!jest)await sleep(slider_value*acc);
         step(true, language)
         if(!jest){
             advance_timeline(language);
@@ -65,6 +71,9 @@ async function loop_run(language){
             update_stack_display();
         }
         run_through_break = false;
+        
+        acc *= 0.99;//We speed up if we've been computing for a while
+        
     }
     if(language.get_break_points(language.get_current_line())){
         run_through_break = true;
@@ -76,6 +85,7 @@ async function loop_run(language){
 
 function run_until(limit, language){
     language.reset_state();
+    set_input(language);
     while(is_executing && (!language.get_break_points(language.get_current_line())||run_through_break) && limit > 0){
         step(true, language)
         run_through_break = false;
@@ -116,7 +126,6 @@ function pause(){
 
 function execute_line(language){
     //Get register[15]'s line of the text_area
-    console.log(language.get_current_line(), language.get_current_code_line()[0])
     let elements = language.get_current_code_line();
     elements = elements.filter((line)=>{return line.length > 0 && line[0] != '\t'});
     language.before_execute_line();
@@ -137,4 +146,4 @@ function execute_line(language){
 function get_executing(){
     return is_executing;
 }
-module.exports = { step, run, run_until, stop, pause, execute_line , get_executing};
+module.exports = { step, run, run_until, stop, pause, execute_line , get_executing, set_input};
