@@ -423,7 +423,11 @@ class armv4_Memory_operator extends armv4_Operator{
         super(name, [4, 6,8, 9,10,11, 12], language);
         this.immediate_ok = true;
         this.address_arg = true;
-        this.takes_label = true;
+        
+        this.takes_label = name[0]=="L"; 
+        //We don't let user change its code on the fly
+        //It is not standard practice, is most of the time impossible
+        //And it is a pain to implement
         this.f = f;
     }
     execute_line(elements, nzcv){

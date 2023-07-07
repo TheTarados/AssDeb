@@ -209,12 +209,14 @@ class Armv4 extends Generic_logic {
                 break;
             }
             if(op.takes_label){//Check if every label argument to jump is valid
+                console.log("label_taker")
                 let label = line[line.length-1];
                 if(!Object.keys(this.jmp_addr).includes(label) && label[0]!="#" && label[0]!="R" && label[0]!="]" && label[0]!="!"){
                     show_error_message("Label "+label+" not found at line " + i, this.code_lines[i]);
                     break;
                 }
-            }else if(op.name == "PUSH" || op.name == "POP"){
+            }
+            if(op.name == "PUSH" || op.name == "POP"){
                 if(line[1] != "{" || line[line.length-1] != "}"){
                     show_error_message("Missing { at beginning and/or } at end of line " + i, this.code_lines[i]);
                     break;
@@ -269,23 +271,92 @@ class Armv4 extends Generic_logic {
                         break;
                     }
                 }
-            else{//We're in a memory instruction
+            else if(op.name[0] != "B"){//We're in a memory instruction
+                //Get index of ]
+                let immediate_pos = -1;
+                let register_pos = -1;
+
+                let index = line.indexOf("]");
+                let prob_with_addr = false;
+                switch(index){
+                    case 5://[R1] or [R1], R2, RRX or [R1], R2, LSL #2
+                        prob_with_addr ||= ![6, 10, 11].includes(line.length);
+                        prob_with_addr ||= line.length == 10 && (line[6] != "," || line[8] != "," ||line[9] != "RRX");
+                        prob_with_addr ||= line.length == 11 && (line[6] != "," || line[8] != "," || !shifts.includes(line[9]));
+                        if(line.length == 10 || line.length == 11){
+                            register_pos = 7;
+                        }
+                        if(line.length == 11){
+                            immediate_pos = 10;
+                        }
+                        break;
+                    case 7://[R1, R2] or [R1, R2]!
+                        prob_with_addr ||= ![8, 9].includes(line.length)
+                        prob_with_addr ||= line.length == 9 && line[8] != "!";
+                        prob_with_addr ||= line[5] != ",";
+                        register_pos = 6;
+                        break;
+                    case 9://[R1, R2, RRX] or [R1, R2, RRX]!
+                        prob_with_addr ||= ![10, 11].includes(line.length);
+                        prob_with_addr ||= line.length == 11 && line[10] != "!";
+                        prob_with_addr ||= line[7] != ",";
+                        prob_with_addr ||= line[8] != "RRX";
+                        register_pos = 6;
+                        break;
+                    case 10://[R1, R2, LSL #2] or [R1, R2, LSL #2]!
+                        prob_with_addr ||= ![11, 12].includes(line.length);
+                        prob_with_addr ||= line.length == 12 && line[10] != "!";
+                        prob_with_addr ||= line[5] != "," ;
+                        prob_with_addr ||= line[7] != "," ;
+                        prob_with_addr ||= !shifts.includes(line[8]);
+                        register_pos = 6;
+                        immediate_pos = 9;
+                        break;
+                    default:
+                        prob_with_addr = true;
+                        break;
+                    
+                }
+                if(prob_with_addr){
+                    show_error_message("Wrong address format: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    break;
+                }
+
                 if(line[1][0] == '#'){
                     show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
                     break;
-                }else if(!this.register_names.includes(line[1])){ 
+                }
+
+                if(line[2] != ','){
+                    show_error_message("In memory instruction, lack a comma: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    break;
+                }
+
+                if(!this.register_names.includes(line[1])){ 
                     show_error_message("In memory instruction, argument which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
                     break;
                 }
+
                 if(line.length>4 && line[4][0] == '#'){
                     show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
                     break;
-                } else if(line.length>4 && !this.register_names.includes(line[4])){ 
+                }
+                if(line.length>4 && !this.register_names.includes(line[4])){ 
                     show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, this.code_lines[i]);
                     break;
                 }
-                if(line.length == 8 && (line[6][0] == '#' || line[7][0] == '#') //It is an immediate
-                && bit_size( Math.abs(this.immediate_solver(line[6]))) > 12 //Whose bits fits in 12
+
+                if(register_pos!=-1 && line[register_pos][0] == '#'){
+                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    break;
+                }
+                if(register_pos!=-1 && !this.register_names.includes(line[register_pos])){ 
+                    show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    break;
+                }
+
+                if(immediate_pos != -1 && line[immediate_pos][0] == '#' //It is an immediate
+                && bit_size( Math.abs(this.immediate_solver(line[immediate_pos]))) > 12 //Whose bits fits in 12
                 ){
                     show_error_message("Immediate argument with too many bits (max 12 bit from highest to zeroth bit for memory addr): "+ line.join(" ")+" at line " + i, code_lines[i]);
                     break;
