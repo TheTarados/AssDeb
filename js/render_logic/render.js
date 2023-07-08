@@ -246,7 +246,14 @@ function unblock_buttons(){
 
 function switch_to_challenge_mode(file){
     //open json
-    let json = JSON.parse(fs.readFileSync('./challenges/'+file));
+    let json;
+    try{
+        json = JSON.parse(fs.readFileSync('./challenges/'+file));
+    }catch{
+        dialog.showErrorBox("Error", "Can't open challenge file, either it doesn't exist or it's not a valid json file.");
+        throw "Can't open challenge file";
+        return;
+    }
     explanation.innerHTML = json.Task;
     chal_in = json.In;
     chal_out = json.Out;
@@ -259,12 +266,14 @@ function switch_to_challenge_mode(file){
     cycle_counter = -1;
     individual_cycle_counter = 0;
     worst_cycle = 0;
+    stop();
 }
 
 function quit_challenge_mode(){
     text_area_cont.style.gridTemplateRows = "100%";
     text_area_cont.style.gridTemplateColumns = "26px calc(100% - 26px)";
     is_in_chall = false;
+    stop();
 }
 
 function render_inout(){

@@ -127,7 +127,14 @@ function pause(){
 function execute_line(language){
     //Get register[15]'s line of the text_area
     let elements = language.get_current_code_line();
-    elements = elements.filter((line)=>{return line.length > 0 && line[0] != '\t'});
+    
+    try{
+        elements = elements.filter((line)=>{return line.length > 0 && line[0] != '\t'});
+    }catch(ex){
+        dialog.showErrorBox("Can't execute line", "There is a problem with the line you're trying to run. It is most likely the end of the code and there is nothing to run."+ (is_in_chall? "Don't forget to return your answer to the challenge using MOV PC, LR":""));
+        throw "Can't execute line";
+    }
+    
     language.before_execute_line();
     for (let i = 0; i < language.get_operators().length; i++){
         let n_char_dif = elements[0].length -  language.get_operators()[i].n_char;

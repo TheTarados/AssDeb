@@ -52,4 +52,15 @@ function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-module.exports = {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep};
+function is_string(s){
+    return typeof (s) === 'string' || s instanceof String;
+}
+
+function input_checker(f_val,operands){
+    if(operands.every(s => !is_string(s)))
+        return f_val;
+    else
+        return "X"
+}
+
+module.exports = {get_unsigned_value, get_signed_value, int_to_string_base, bit_size_shifted, bit_size, sleep, is_string, input_checker};

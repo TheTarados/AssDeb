@@ -1,6 +1,6 @@
 
 
-let {get_unsigned_value, bit_size_shifted} = require('../utils.js');
+let {get_unsigned_value, bit_size_shifted, input_checker} = require('../utils.js');
 class armv4_Operator{
     constructor(name, n_args, language){
         this.name = name;
@@ -80,11 +80,17 @@ data_proc_exec = (elements, nzcv, f, language)=>{
         nzcv[2] = 0;
         nzcv[3] = 0;
     }
-    language.get_register_values()[[parseInt(elements[1].substring(1))]] = f(language.get_register_value(elements[1+source]), right_operand, s, nzcv);
-
+    let left_operand = language.get_register_value(elements[1+source]);
+    if(elements[0].substring(0, 3) == "MOV" || elements[0].substring(0, 3) == "MVN"){
+        operands = [right_operand];
+    }else{
+        operands = [left_operand, right_operand];
+    }
+    language.get_register_values()[[parseInt(elements[1].substring(1))]] = input_checker(f(left_operand, right_operand, s, nzcv), operands);
+    
     if(s){
-        nzcv[0] = (language.get_register_value(elements[1]) >> 31)&1;
-        nzcv[1] = language.get_register_value(elements[1]) == 0;
+        nzcv[0] = input_checker((language.get_register_value(elements[1]) >> 31)&1, operands);
+        nzcv[1] = input_checker(language.get_register_value(elements[1]) == 0, operands);
     }
     
     
@@ -236,20 +242,19 @@ mul_exec = (elements, nzcv,f ,g)=>{
         nzcv[2] = 0;
         nzcv[3] = 0;
     }
-    let low_bits = f(this.language.get_register_value(elements[1]), 
+    operands = [this.language.get_register_value(elements[1]), 
     this.language.get_register_value(elements[3]), 
     this.language.immediate_solver(elements[5]),
-    this.language.immediate_solver(elements[7]), s);
-    let high_bits = g(this.language.get_register_value(elements[1]), 
-    this.language.get_register_value(elements[3]), 
-    this.language.immediate_solver(elements[5]),
-    this.language.immediate_solver(elements[7]), s);
-    this.language.get_register_values()[[parseInt(elements[1].substring(1))]] = low_bits;
-    this.language.get_register_values()[[parseInt(elements[3].substring(1))]] = high_bits;
+    this.language.immediate_solver(elements[7])]
+    let low_bits = f(operands[0], operands[1], operands[2], operands[3], s);
+    let high_bits = g(operands[0], operands[1], operands[2], operands[3], s);
+    
+    this.language.get_register_values()[[parseInt(elements[1].substring(1))]] = input_checker(low_bits, operands);
+    this.language.get_register_values()[[parseInt(elements[3].substring(1))]] = input_checker(high_bits, operands);
     
     if(!s) return nzcv;
-    nzcv[0] = (this.language.get_register_value(elements[1]) >> 31)&1;
-    nzcv[1] = this.language.get_register_value(elements[1]) == 0;
+    nzcv[0] = input_checker((this.language.get_register_value(elements[1]) >> 31)&1, operands);
+    nzcv[1] = input_checker(this.language.get_register_value(elements[1]) == 0, operands);
     return nzcv;
     
 };
