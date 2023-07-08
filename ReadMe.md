@@ -14,7 +14,7 @@ The advantages are the easy access to all of the memory and the fact that the pr
 
 For Mac OS, as code signing is necessary to run a program and I don't want to pay for it, you will have to build it yourself. See the next section for more information.
 
-For Windows and Linux users, you can find the current release on this page: https://github.com/TheTarados/AssDeb/releases.
+For Windows and Linux users, you can find the current release on this page: https://github.com/TheTarados/AssDeb/releases/latest.
 
 Download it, extract it and run the binary assdeb(.exe) inside it. AssDeb should run!
 
