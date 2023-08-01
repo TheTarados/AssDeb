@@ -5,6 +5,7 @@ const { app, BrowserWindow, Menu} = require('electron');
 const fs = require('fs');
 const path = require('path');
 const remoteMain = require('@electron/remote/main');
+const ff = require('node-find-folder');
 remoteMain.initialize();
 const createWindow = () => {
   // Create the browser window.
@@ -25,7 +26,8 @@ const createWindow = () => {
   mainWindow.loadFile('index.html')
   
   chal_submenu = [];
-  fs.readdirSync('./challenges').forEach(file => {
+  var ff_result = new ff('challenges');
+  fs.readdirSync(ff_result[0]).forEach(file => {
     chal_submenu.push({label: file.split('.')[1], click: () => { mainWindow.webContents.send('Open Challenge', file) }});
   });
   

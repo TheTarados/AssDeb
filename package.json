@@ -24,6 +24,7 @@
     "@electron/remote": "^2.0.8",
     "@fontsource/source-code-pro": "^5.0.1",
     "electron-squirrel-startup": "^1.0.0",
-    "fs": "^0.0.1-security"
+    "fs": "^0.0.1-security",
+    "node-find-folder": "^0.1.32"
   }
 }
