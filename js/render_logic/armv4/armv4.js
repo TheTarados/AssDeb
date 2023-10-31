@@ -279,6 +279,9 @@ class Armv4 extends Generic_logic {
                 let index = line.indexOf("]");
                 let prob_with_addr = false;
                 switch(index){
+                    case -1: //Label (only case where no ])
+                        prob_with_addr ||= !Object.keys(this.jmp_addr).includes(line[3])
+                        break;
                     case 5://[R1] or [R1], R2, RRX or [R1], R2, LSL #2
                         prob_with_addr ||= ![6, 8, 10, 11].includes(line.length);
                         prob_with_addr ||= line.length >6 && line[6] != ",";
@@ -400,10 +403,9 @@ class Armv4 extends Generic_logic {
         
 
         //TODO: Make this understand pre run instruction
-        
         //Remove everything between a . and a \n
-        //temp_code = temp_code.replace(/\..*\n/g, '\n');
-
+        temp_code = temp_code.replace( /\.(?!WORD).*\n/g, '\n');
+    
         //Replace PC with R15
         temp_code = temp_code.replace(/PC/g, 'R15');
 

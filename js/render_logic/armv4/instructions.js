@@ -472,9 +472,9 @@ class armv4_Memory_operator extends armv4_Operator{
         let value = 0;
         let arg_is_label = elements.length ==4;
         let addr =  arg_is_label? this.language.jmp_addr[elements[3]]: this.language.address_solver(elements);
-        if(elements[4] == "R15" || arg_is_label)//addr relative to PC
+        if(arg_is_label || elements[4] == "R15"){//addr relative to PC
             value = parseInt(this.language.code[addr/4][1], 16);
-        else if(addr<this.language.get_register_values()[13])//addr relative to ram
+        }else if(addr<this.language.get_register_values()[13])//addr relative to ram
             value = this.language.ram[Math.floor(addr/4)];
         else//addr relative to stack
             value = this.language.stack[this.language.stack_beg/4-Math.floor(addr/4)-1];    
