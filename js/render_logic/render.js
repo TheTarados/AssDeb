@@ -244,11 +244,14 @@ function unblock_buttons(){
     pause_button.disabled = false;
 }
 
+const ff = require('node-find-folder');
+var ff_result = new ff('challenges');
+console.log(ff_result)
 function switch_to_challenge_mode(file){
     //open json
     let json;
     try{
-        json = JSON.parse(fs.readFileSync('./challenges/'+file));
+        json = JSON.parse(fs.readFileSync(ff_result[0]+"/"+file));
     }catch{
         dialog.showErrorBox("Error", "Can't open challenge file, either it doesn't exist or it's not a valid json file.");
         throw "Can't open challenge file";
