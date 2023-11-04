@@ -693,8 +693,9 @@ class armv4_Operator_Lists{
         let mov_operator = new armv4_Data_proc_operator("MOV", [4,6,7], (a,b,s, nzcv)=>{ return b; }, "1101", language);
 
         let add_operator = new armv4_Data_proc_operator("ADD", [4,6,7, 9], (a,b,s, nzcv)=>{
-            
-            let sum = (get_unsigned_value(a)+get_unsigned_value(b))&0xFFFFFFFF;
+            a = get_unsigned_value(a)
+            b = get_unsigned_value(b)
+            let sum = (a + b)&0xFFFFFFFF;
             if(!s) return sum;
 
             let a_31 = (a >> 31) & 1;
@@ -709,7 +710,9 @@ class armv4_Operator_Lists{
         }, "0100", language);
 
         let adc_operator = new armv4_Data_proc_operator("ADC", [4,6,7, 9], (a,b,nzcv)=>{
-            let sum = a+b+C;
+            a = get_unsigned_value(a)
+            b = get_unsigned_value(b)
+            let sum = (a+b+C)&0xFFFFFFFF;
             if(!s) return sum;
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
@@ -723,8 +726,10 @@ class armv4_Operator_Lists{
         }, "0101", language);
 
         let sub_operator = new armv4_Data_proc_operator("SUB", [4,6,7, 9], (a,b,s,nzcv)=>{ 
+            a = get_unsigned_value(a)
+            b = get_unsigned_value(b)
             let not_b = ~b;
-            let sum = a + not_b + 1;
+            let sum = (a + not_b + 1)&0xFFFFFFFF;
             if(!s) return sum;
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
@@ -739,14 +744,16 @@ class armv4_Operator_Lists{
         let rsub_operator = new armv4_Data_proc_operator("RSB", [4,6,7, 9], (a,b,s,nzcv)=>{ sub_operator.f(b,a,s)}, "0011");
 
         let sbc_operator = new armv4_Data_proc_operator("SBC", [4,6,7, 9], (a,b,s,nzcv)=>{
+            a = get_unsigned_value(a)
+            b = get_unsigned_value(b)
             let not_b = ~b;
-            let sum = a + not_b + 1;
+            let sum = (a + not_b + 1 - C)&0xFFFFFFFF;
             if(!s)return sum; 
                 
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
             let res_31 = (sum >> 31) & 1;
-            let res_32 = a+get_unsigned_value(not_b)+1>0xFFFFFFFF;
+            let res_32 = a+get_unsigned_value(not_b)+1 - C>0xFFFFFFFF;
             
             nzcv[3] = (a_31^b_31) & (a_31^res_31);
             nzcv[2] = res_32;
