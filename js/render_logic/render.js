@@ -246,7 +246,6 @@ function unblock_buttons(){
 
 const ff = require('node-find-folder');
 var ff_result = new ff('challenges');
-console.log(ff_result)
 function switch_to_challenge_mode(file){
     //open json
     let json;

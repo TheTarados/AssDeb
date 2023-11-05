@@ -237,3 +237,13 @@ body{
     user-select: none;
     text-align: center;
 }
+
+#version_indicator{
+    position: absolute;
+    left : calc(100% - 60px);
+    top :  calc(100% - 25px);;
+    font-size: 15px;
+    color: #c9c8b7;
+    font-family: "Source Code Pro";
+    user-select: none;
+}
