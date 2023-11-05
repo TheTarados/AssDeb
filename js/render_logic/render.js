@@ -114,10 +114,10 @@ text_area.addEventListener('keydown', function(e) {
         var end = this.selectionEnd;
 
         // set textarea value to: text before caret + tab + text after caret
-        this.value = this.value.substring(0, start) + "\t" + this.value.substring(end);
+        this.value = this.value.substring(0, start) + "    " + this.value.substring(end);
 
         // put caret at right position again
-        this.selectionStart = this.selectionEnd = start + 1;
+        this.selectionStart = this.selectionEnd = start + 4;
 
     }
 });
