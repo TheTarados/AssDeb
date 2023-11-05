@@ -25,7 +25,13 @@ ipcRenderer.on('Open file', (event, arg) => {
             opened_file = fileNames.filePaths[0];
             fs.promises.readFile(fileNames.filePaths[0]).then((data) => {
                 text_area.value = data.toString();
-            }).then(()=>{update_line_number()})
+            }).then(()=>{
+                unblock_buttons();
+                error_info.style.visibility = "hidden";
+                can_gen_hex = true;
+                language.setup_code(text_area.value);
+                update_line_number();
+            })
         })
     
 })
