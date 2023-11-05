@@ -193,6 +193,7 @@ class Armv4 extends Generic_logic {
         //Second run, raise errors 
         for(let i = 0; i < this.code.length; i++){
             let line = this.code[i];
+            let last_elem = line[line.length-1]
             //raise error if first element of line is not an operator
             if(!this.get_operators().some((op)=> {return op.name == line[0].substring(0, op.n_char)})){
                 show_error_message("No operation at line " + i, line);
@@ -204,19 +205,34 @@ class Armv4 extends Generic_logic {
             //Check if there is the right number of argument
             //if code[i].length-1 is in op.n_arg
             let shifts = ["LSL", "LSR", "ASR", "ROR"];
+            if(shifts.includes(op.name) && last_elem[0] == "#" ){
+                let val = this.immediate_solver(last_elem);
+                if(val < 0){
+                    show_error_message("Shift immediate must be positive " + i, this.code_lines[i]);
+                    break;
+                }
+                if(val > 32){
+                    show_error_message("Shift instruction immediate shouldn't be bigger than 32 at line " + i, this.code_lines[i]);
+                    break;
+                }
+                if(["LSL", "ROR"].includes(op.name) &&  val > 31){
+                    show_error_message("LSL and ROR immediate shouldn't be bigger than 31 at line " + i, this.code_lines[i]);
+                    break;
+                }
+            }
             if(!op.n_arg.includes(line.length)){
                 show_error_message("Wrong number of arguments, "+ line.length+ " for op "+op.name+" at line " + i, this.code_lines[i]);
                 break;
             }
             if(op.takes_label){//Check if every label argument to jump is valid
-                let label = line[line.length-1];
+                let label = last_elem;
                 if(!Object.keys(this.jmp_addr).includes(label) && label[0]!="#" && label[0]!="R" && label[0]!="]" && label[0]!="!"){
                     show_error_message("Label "+label+" not found at line " + i, this.code_lines[i]);
                     break;
                 }
             }
             if(op.name == "PUSH" || op.name == "POP"){
-                if(line[1] != "{" || line[line.length-1] != "}"){
+                if(line[1] != "{" || last_elem != "}"){
                     show_error_message("Missing { at beginning and/or } at end of line " + i, this.code_lines[i]);
                     break;
                 }
@@ -241,7 +257,7 @@ class Armv4 extends Generic_logic {
                     break;
                 }
                 let W = line[2] == "!" ? 1 : 0;
-                if(line[3+W] != "{" || line[line.length-1] != "}"){
+                if(line[3+W] != "{" || last_elem != "}"){
                     show_error_message("Missing { at beginning and/or } at end of line " + i, this.code_lines[i]);
                     break;
                 }

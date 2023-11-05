@@ -168,7 +168,13 @@ class armv4_Data_proc_operator extends armv4_Operator{
             //Shift
             if(is_Immediate){
                 //Five bits of shamt5, our immediate
-                bin += get_unsigned_value(this.language.immediate_solver(elems[elems.length-1])).toString(2).padStart(5, "0");
+                let shift_val = get_unsigned_value(this.language.immediate_solver(elems[elems.length-1]));
+                bin += (shift_val%32).toString(2).padStart(5, "0");
+                if(shift_val == 0){
+                    bin += "00"
+                }else{
+                    bin += shift_to_sh[op_block.substring(0,3)];
+                }
             }else{
                 if(this.name != "RRX"){
                     bin += parseInt(elems[elems.length-1].substring(1)).toString(2).padStart(4, "0");
@@ -176,8 +182,8 @@ class armv4_Data_proc_operator extends armv4_Operator{
                     bin += "0000";
                 }
                 bin += "0";
+                bin += shift_to_sh[op_block.substring(0,3)];
             }
-            bin += shift_to_sh[op_block.substring(0,3)];
             if(this.name != "RRX"){
                 bin += is_Immediate?"0":"1";
                 bin += parseInt(elems[1+source].substring(1)).toString(2).padStart(4, "0");
@@ -790,19 +796,43 @@ class armv4_Operator_Lists{
         let xor_operator = new armv4_Data_proc_operator("EOR", [4,6,7,9], (a,b,s,nzcv)=>{ return a^b; }, "0001", language);
 
         //lsl
-        let lsl_operator = new armv4_Data_proc_operator("LSL", [4,6], (a,b,s,nzcv)=>{ return a<<b; }, "1101", language);
+        let lsl_operator = new armv4_Data_proc_operator("LSL", [4,6], (a,b,s,nzcv)=>{
+            b &= 0xFF;
+            if(b>31){
+                return 0;
+            }
+            return a<<b;
+        }, "1101", language);
+
         //lsr
-        let lsr_operator = new armv4_Data_proc_operator("LSR", [4,6], (a,b,s,nzcv)=>{ return a>>>b; }, "1101", language);
+        let lsr_operator = new armv4_Data_proc_operator("LSR", [4,6], (a,b,s,nzcv)=>{
+            b &= 0xFF;
+            if(b>31){
+                return 0;
+            }
+            return a>>>b; 
+        }, "1101", language);
+
         //asr
-        let asr_operator = new armv4_Data_proc_operator("ASR", [4,6], (a,b,s,nzcv)=>{ return a>>b; }, "1101", language);
+        let asr_operator = new armv4_Data_proc_operator("ASR", [4,6], (a,b,s,nzcv)=>{ 
+            b &= 0xFF;
+            if(b>31){
+                return (a&0x80000000==1)?0xFFFFFFFF:0;
+            }
+        
+            return a>>b; 
+        }, "1101", language);
+        
         //ror
         let ror_operator = new armv4_Data_proc_operator("ROR", [4,6], (a,b,s,nzcv)=>{ return (a>>>b) | (a<<(32-b)); }, "1101", language);
+        
         //rrx
         let rrx_operator = new armv4_Data_proc_operator("RRX", [4], (a,b,s,nzcv)=>{ 
             if(s){C = a&1;}
             return (a>>>1) | (C<<31); 
         }, "1101", language);
         rrx_operator.immediate_ok = false;
+        
         //bic
         let bic_operator = new armv4_Data_proc_operator("BIC", [4,6,7,9], (a,b,s,nzcv)=>{return get_unsigned_value(a)&(~get_unsigned_value(b)); }, "1110", language);
         //mvn

@@ -52,3 +52,14 @@ MOV PC, LR
 BL TEST
 LDR R3, [R1], #4
 SUB R4, R3, #9
+lsl r1, r0, #0
+lsl r1, r0, #31
+lsr r1, r0, #0
+lsr r1, r0, #1
+lsr r1, r0, #32
+asr r1, r0, #0
+asr r1, r0, #1
+asr r1, r0, #32
+ror r1, r0, #0
+ror r1, r0, #1
+ror r1, r0, #31
