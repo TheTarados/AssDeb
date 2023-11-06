@@ -63,3 +63,17 @@ asr r1, r0, #32
 ror r1, r0, #0
 ror r1, r0, #1
 ror r1, r0, #31
+add r0, r1, lsl #0
+add r0, r1, lsl #31
+add r0, r1, lsr #0
+add r0, r1, lsr #1
+add r0, r1, lsr #32
+add r0, r1, asr #0
+add r0, r1, asr #1
+add r0, r1, asr #32
+add r0, r1, ror #31
+add r0, r1, ror #0
+add r0, r1, ror #1
+strhs r0, [r1]
+LDRSBls r0, [r1]
+LDRSBls r0, [r1,  r2]

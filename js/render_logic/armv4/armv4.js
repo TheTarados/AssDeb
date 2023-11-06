@@ -26,6 +26,18 @@ class Armv4 extends Generic_logic {
     get_operators(){
         return this.operators_object.get_operators();
     }
+    get_operator(op_string){
+        let op = this.get_operators().find((op)=> {
+            return (op.name == op_string.substring(0, op.n_char)) && (op.s_ok || op_string[op.n_char] != 'S')&& 
+            (
+                op_string.length == op.n_char || //nothing after
+                this.get_conds().some((cond) => cond.name == op_string.substring(op.n_char))|| //cond at the end
+                (op_string.length == op.n_char+1 && op_string[op.n_char]=='S')|| //only an S at the end
+                (op_string[op.n_char]=='S' && this.get_conds().some((cond) => cond.name == op_string.substring(op.n_char+1))) //an S and a cond at the end
+            );
+        })
+        return op == undefined? false:op;
+    }
     get_conds(){
         return this.operators_object.get_conds();
     }
@@ -170,17 +182,7 @@ class Armv4 extends Generic_logic {
         this.code_lines = cleaned_code["temp_code_lines"];
         //First run, register all labels
         for(let i = 0; i < this.code.length; i++){
-            if(!this.get_operators().some((op)=> {
-                return (op.name == this.code[i][0].substring(0, op.n_char))//The beginnings are the same
-                && 
-                (
-                    this.code[i][0].length == op.n_char || 
-                    this.get_conds().some((cond) => cond.name == this.code[i][0].substring(op.n_char))||
-                    (this.code[i][0].length == op.n_char+1 && this.code[i][0][op.n_char]=='S')||
-                    (this.code[i][0][op.n_char]=='S' && this.get_conds().some((cond) => cond.name == this.code[i][0].substring(op.n_char+1)))
-                )
-                
-                })){
+            if(!this.get_operator(this.code[i][0])){
                 this.jmp_addr[this.code[i][0].replace(/:/g, " ").trim()] = i*4;
                 this.code[i].splice(0,1);
                 if(this.code[i].length == 0){
@@ -193,97 +195,99 @@ class Armv4 extends Generic_logic {
         //Second run, raise errors 
         for(let i = 0; i < this.code.length; i++){
             let line = this.code[i];
+            let line_pos = this.code_lines[i];
             let last_elem = line[line.length-1]
-            //raise error if first element of line is not an operator
-            if(!this.get_operators().some((op)=> {return op.name == line[0].substring(0, op.n_char)})){
-                show_error_message("No operation at line " + i, line);
+            
+            let op = this.get_operator(line[0])
 
+            //raise error if first element of line is not an operator
+            if(!op){
+                show_error_message("Already a label on line " + i + " and what comes after is not valid instruction", line_pos);
                 break;
             }
-            let op = this.get_operators().find((op)=> {return op.name == line[0].substring(0, op.n_char)});
-            
+
             //Check if there is the right number of argument
             //if code[i].length-1 is in op.n_arg
             let shifts = ["LSL", "LSR", "ASR", "ROR"];
             if(shifts.includes(op.name) && last_elem[0] == "#" ){
                 let val = this.immediate_solver(last_elem);
                 if(val < 0){
-                    show_error_message("Shift immediate must be positive " + i, this.code_lines[i]);
+                    show_error_message("Shift immediate must be positive " + i, line_pos);
                     break;
                 }
                 if(val > 32){
-                    show_error_message("Shift instruction immediate shouldn't be bigger than 32 at line " + i, this.code_lines[i]);
+                    show_error_message("Shift instruction immediate shouldn't be bigger than 32 at line " + i, line_pos);
                     break;
                 }
                 if(["LSL", "ROR"].includes(op.name) &&  val > 31){
-                    show_error_message("LSL and ROR immediate shouldn't be bigger than 31 at line " + i, this.code_lines[i]);
+                    show_error_message("LSL and ROR immediate shouldn't be bigger than 31 at line " + i, line_pos);
                     break;
                 }
             }
             if(!op.n_arg.includes(line.length)){
-                show_error_message("Wrong number of arguments, "+ line.length+ " for op "+op.name+" at line " + i, this.code_lines[i]);
+                show_error_message("Wrong number of arguments, "+ line.length+ " for op "+op.name+" at line " + i, line_pos);
                 break;
             }
             if(op.takes_label){//Check if every label argument to jump is valid
                 let label = last_elem;
                 if(!Object.keys(this.jmp_addr).includes(label) && label[0]!="#" && label[0]!="R" && label[0]!="]" && label[0]!="!"){
-                    show_error_message("Label "+label+" not found at line " + i, this.code_lines[i]);
+                    show_error_message("Label "+label+" not found at line " + i, line_pos);
                     break;
                 }
             }
             if(op.name == "PUSH" || op.name == "POP"){
                 if(line[1] != "{" || last_elem != "}"){
-                    show_error_message("Missing { at beginning and/or } at end of line " + i, this.code_lines[i]);
+                    show_error_message("Missing { at beginning and/or } at end of line " + i, line_pos);
                     break;
                 }
                 for(let j = 2; j < line.length-1; j+=2){
                     if(!this.register_names.includes(line[j])){
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
                         break;
                     }
                     if(!(line[j+1] == "," || line[j+1] == "-") && j != line.length-2){
-                        show_error_message("Missing , or - between registers at line " + i, this.code_lines[i]);
+                        show_error_message("Missing , or - between registers at line " + i, line_pos);
                         break;
                     }
                 }
             }else if (op.name == ".WORD"){
                 if(line[1][0]== "#"){
-                    show_error_message(".word doesnt need the # at ", this.code_lines[i]);
+                    show_error_message(".word doesnt need the # at ", line_pos);
                     break;
                 }
             }else if(op.name == "LDM" || op.name == "LDMIA" || op.name == "LDMFD"){
                 if(!this.register_names.includes(line[1])){
-                    show_error_message("Argument "+line[1]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("Argument "+line[1]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
                 let W = line[2] == "!" ? 1 : 0;
                 if(line[3+W] != "{" || last_elem != "}"){
-                    show_error_message("Missing { at beginning and/or } at end of line " + i, this.code_lines[i]);
+                    show_error_message("Missing { at beginning and/or } at end of line " + i, line_pos);
                     break;
                 }
                 for(let j = 4+W; j < line.length-1; j+=2){
                     if(!this.register_names.includes(line[j])){
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
                         break;
                     }
                     if(!(line[j+1] == "," || line[j+1] == "-") && j != line.length-2){
-                        show_error_message("Missing , or - between registers at line " + i, this.code_lines[i]);
+                        show_error_message("Missing , or - between registers at line " + i, line_pos);
                         break;
                     }
                 }
             }else if(!op.address_arg && op.name[0] != "B")         
                 for(let j = 1; j < line.length; j+=2){                                   //Check if arguments are valid
                     if(line[j][0] == '#' && !(j ==line.length-1 && op.immediate_ok)){ //So only the second can be an immediate
-                        show_error_message("Immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                        show_error_message("Immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, line_pos);
                         break;
                     }
                     if(line[j][0] != '#' && !this.register_names.includes(line[j]) 
                     && !(shifts.includes(line[j])&& j==line.length-2) && !(line[j]=="RRX" && j==line.length-1)){ 
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
                         break;
                     }
                     if(line[j][0] == '#' && bit_size_shifted( Math.abs(this.immediate_solver(line[j]))) > (line[0]=="MOV"? 12: 8)){//Immediate respects bit limit
-                        show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr and 12 for mov): "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                        show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr and 12 for mov): "+ line.join(" ")+" at line " + i, line_pos);
                         break;
                     }
                 }
@@ -343,40 +347,40 @@ class Armv4 extends Generic_logic {
                     
                 }
                 if(prob_with_addr){
-                    show_error_message("Wrong address format: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("Wrong address format: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(line[1][0] == '#'){
-                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(line[2] != ','){
-                    show_error_message("In memory instruction, lack a comma: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, lack a comma: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(!this.register_names.includes(line[1])){ 
-                    show_error_message("In memory instruction, argument which should be a register is not a register: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, argument which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(line.length>4 && line[4][0] == '#'){
-                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
                 if(line.length>4 && !this.register_names.includes(line[4])){ 
-                    show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(register_pos>0 && line[register_pos][0] == '#'){
-                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
                 if(register_pos>0 && !this.register_names.includes(line[register_pos])){ 
-                    show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("In memory instruction, argument which should be a register is not a register : "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
@@ -384,14 +388,14 @@ class Armv4 extends Generic_logic {
                 if(register_pos <0 && line[6][0] == '#' //It is an immediate
                 && bit_size( Math.abs(this.immediate_solver(line[-register_pos]))) > 12 //Whose bits fits in 12
                 ){
-                    show_error_message("Immediate argument has too many bits (max 12 bit from highest to zeroth bit): "+ line.join(" ")+" at line " + i, this.code_lines[i]);
+                    show_error_message("Immediate argument has too many bits (max 12 bit from highest to zeroth bit): "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
 
                 if(immediate_pos  > 0 && line[immediate_pos][0] == '#' //It is an immediate
                 && bit_size( Math.abs(this.immediate_solver(line[immediate_pos]))) > 5 //Whose bits fits in 12
                 ){
-                    show_error_message("Immediate shift has too many bits (max 5 bit from highest to zeroth bit): "+ line.join(" ")+" at line " + i, code_lines[i]);
+                    show_error_message("Immediate shift has too many bits (max 5 bit from highest to zeroth bit): "+ line.join(" ")+" at line " + i, line_pos);
                     break;
                 }
             }
@@ -473,13 +477,9 @@ class Armv4 extends Generic_logic {
         this.setup_code(code);
         let hex = "";
         for(let i = 0; i < this.code.length; i++){
-            let elements = this.code[i];
-            for (let j = 0; j < this.get_operators().length; j++){
-                if(elements[0].substring(0, this.get_operators()[j].n_char) == this.get_operators()[j].name){
-                    hex += this.get_operators()[j].to_hex(elements, i)+"\n";
-                    break;
-                }
-            }
+            let elems = this.code[i];
+            let op = this.get_operator(elems[0]);
+            hex += op.to_hex(elems, i)+"\n";
         }
         return hex;
     }

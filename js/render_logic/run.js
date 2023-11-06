@@ -136,18 +136,15 @@ function execute_line(language){
     }
     
     language.before_execute_line();
-    for (let i = 0; i < language.get_operators().length; i++){
-        let n_char_dif = elements[0].length -  language.get_operators()[i].n_char;
-        if(elements[0].substring(0, language.get_operators()[i].n_char) == language.get_operators()[i].name
-        && !(n_char_dif == 1 && elements[0][elements[0].length-1] != 'S')){
-            nzcv = language.get_operators()[i].execute_line(elements, language.get_register_values().slice(16, 20));
-            
-            for(let j = 0; j < 4; j++){
-                language.register[16+j] = nzcv[j];
-            }
-            break;
-        }
+
+    let op = language.get_operator(elements[0])
+    
+    nzcv = op.execute_line(elements, language.get_register_values().slice(16, 20));
+    
+    for(let j = 0; j < 4; j++){
+        language.register[16+j] = nzcv[j];
     }
+    
     language.after_execute_line();
 }
 function get_executing(){

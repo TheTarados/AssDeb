@@ -10,6 +10,7 @@ class armv4_Operator{
         this.immediate_ok = false;
         this.address_arg = false;
         this.takes_label = false;
+        this.s_ok = false;
         this.language = language;
     }
     to_hex(elements, line_index){
@@ -100,6 +101,7 @@ class armv4_Data_proc_operator extends armv4_Operator{
     constructor(name, n_args, f, cmd, language){
         super(name, n_args, language)
         this.immediate_ok = true;
+        this.s_ok = true;
         this.f = f;
         this.cmd = cmd;
         this.execute_line =  (elements, nzcv)=>data_proc_exec(elements, nzcv, f, language);
@@ -225,8 +227,13 @@ class armv4_Data_proc_operator extends armv4_Operator{
                 bin += "1";
             }else{
                 //5 bits of shamt5
-                bin += get_unsigned_value(this.language.immediate_solver(elems[elems.length-1])).toString(2).padStart(5, "0");
-                bin += shift_to_sh[elems[elems.length-2]];
+                let shift_val = get_unsigned_value(this.language.immediate_solver(elems[elems.length-1]));
+                bin += (shift_val%32).toString(2).padStart(5, "0");
+                if(shift_val == 0){
+                    bin += "00"
+                }else{
+                    bin += shift_to_sh[elems[elems.length-2]];
+                }
                 //a 0 bit
                 bin += "0";
             }
@@ -271,6 +278,7 @@ class armv4_Mul_operator extends armv4_Operator{
         this.f = f;
         this.g = g;
         this.cmd = cmd;
+        this.s_ok = true;
         this.execute_line = (elements, nzcv)=>{
             if(elements[0] != "MUL"){
                 return mul_exec(elements, nzcv, f, g);
@@ -499,7 +507,7 @@ class armv4_Memory_operator extends armv4_Operator{
     }
     to_hex(elems, line_index){
         //if elems[0] is not in ["STRH", "LDRH", "LDRSB", "LDRSH"]
-        if( !["STRH", "LDRH", "LDRSB", "LDRSH"].includes(elems[0])){
+        if( !["STRH", "LDRH", "LDRSB", "LDRSH"].includes(this.name)){
             return this.com_memory_hex(elems, line_index);
         }else{
             return this.xtra_memory_hex(elems, line_index);
@@ -645,7 +653,7 @@ class armv4_Memory_operator extends armv4_Operator{
             bin += "0000";
         }
         bin+= "1";
-        bin+= {"STRH": "01", "LDRH": "01", "LDRSB": "10", "LDRSH": "11"}[elems[0]];
+        bin+= {"STRH": "01", "LDRH": "01", "LDRSB": "10", "LDRSH": "11"}[this.name];
         bin += "1";
         
         if(arg_is_label){//label
@@ -664,6 +672,7 @@ class armv4_Memory_operator extends armv4_Operator{
             //Rm
             bin += parseInt(elems[post_indexing?7:6].substring(1+!U)).toString(2).padStart(4, "0");
         }
+        
         //Doing two 16 bit hex numbers to avoid overflows
         return parseInt(bin.substring(0,16), 2).toString(16).padStart(4, "0").toUpperCase()
                 +parseInt(bin.substring(16), 2).toString(16).padStart(4, "0").toUpperCase();

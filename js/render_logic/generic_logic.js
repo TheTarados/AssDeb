@@ -2,6 +2,9 @@ class Generic_logic{
     get_operators(){
         throw new Error('Abstract method cannot be called.');
     };
+    get_operator(op_string){
+        throw new Error('Abstract method cannot be called.');
+    }
     get_stack(){
         throw new Error('Abstract method cannot be called.');
     };
