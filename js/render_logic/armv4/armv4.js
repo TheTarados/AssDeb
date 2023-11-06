@@ -196,6 +196,27 @@ class Armv4 extends Generic_logic {
         for(let i = 0; i < this.code.length; i++){
             let line = this.code[i];
             let line_pos = this.code_lines[i];
+            let catched_error = false;
+            for (let i =0; i < line.length; i++){
+                let val = this.immediate_solver(line[i])
+                
+                if(line[i][0] == "#"){
+                    if(isNaN(val)){
+                        show_error_message("Something beginning with # is not an immediate at line "+i, line_pos);
+                        catched_error = true;
+                        break;
+                    }
+                    if(val > 0xFFFFFFFF || val < 1-0x7FFFFFFF){
+                        show_error_message("Immediate bigger than 32 bit value "+i, line_pos);
+                        catched_error = true;
+                        break;
+
+                    }
+                }
+            }
+ 
+            if(catched_error)break;
+ 
             let last_elem = line[line.length-1]
             
             let op = this.get_operator(line[0])
@@ -228,10 +249,9 @@ class Armv4 extends Generic_logic {
                 show_error_message("Wrong number of arguments, "+ line.length+ " for op "+op.name+" at line " + i, line_pos);
                 break;
             }
-            if(op.takes_label){//Check if every label argument to jump is valid
-                let label = last_elem;
-                if(!Object.keys(this.jmp_addr).includes(label) && label[0]!="#" && label[0]!="R" && label[0]!="]" && label[0]!="!"){
-                    show_error_message("Label "+label+" not found at line " + i, line_pos);
+            if(op.takes_label && op.name[0] == "B"){//Check if every label argument to jump is valid
+                if (!Object.keys(this.jmp_addr).includes(last_elem) && last_elem[0]!="#"){
+                    show_error_message("Wrong argument for B or label not recognized at line " + i, line_pos);
                     break;
                 }
             }
@@ -242,7 +262,7 @@ class Armv4 extends Generic_logic {
                 }
                 for(let j = 2; j < line.length-1; j+=2){
                     if(!this.register_names.includes(line[j])){
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register at line " + i, line_pos);
                         break;
                     }
                     if(!(line[j+1] == "," || line[j+1] == "-") && j != line.length-2){
@@ -257,7 +277,7 @@ class Armv4 extends Generic_logic {
                 }
             }else if(op.name == "LDM" || op.name == "LDMIA" || op.name == "LDMFD"){
                 if(!this.register_names.includes(line[1])){
-                    show_error_message("Argument "+line[1]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
+                    show_error_message("Argument "+line[1]+" which should be a register is not a register at line " + i, line_pos);
                     break;
                 }
                 let W = line[2] == "!" ? 1 : 0;
@@ -267,7 +287,7 @@ class Armv4 extends Generic_logic {
                 }
                 for(let j = 4+W; j < line.length-1; j+=2){
                     if(!this.register_names.includes(line[j])){
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register at line " + i, line_pos);
                         break;
                     }
                     if(!(line[j+1] == "," || line[j+1] == "-") && j != line.length-2){
@@ -275,23 +295,54 @@ class Armv4 extends Generic_logic {
                         break;
                     }
                 }
-            }else if(!op.address_arg && op.name[0] != "B")         
+            }else if(!op.address_arg && op.name[0] != "B"){
                 for(let j = 1; j < line.length; j+=2){                                   //Check if arguments are valid
                     if(line[j][0] == '#' && !(j ==line.length-1 && op.immediate_ok)){ //So only the second can be an immediate
-                        show_error_message("Immediate argument in the wrong position: "+ line.join(" ")+" at line " + i, line_pos);
+                        show_error_message("Immediate argument in the wrong position at line " + i, line_pos);
                         break;
                     }
                     if(line[j][0] != '#' && !this.register_names.includes(line[j]) 
                     && !(shifts.includes(line[j])&& j==line.length-2) && !(line[j]=="RRX" && j==line.length-1)){ 
-                        show_error_message("Argument "+line[j]+" which should be a register is not a register: "+ line.join(" ")+" at line " + i, line_pos);
+                        show_error_message("Argument "+line[j]+" which should be a register is not a register: at line " + i, line_pos);
                         break;
                     }
-                    if(line[j][0] == '#' && bit_size_shifted( Math.abs(this.immediate_solver(line[j]))) > (line[0]=="MOV"? 12: 8)){//Immediate respects bit limit
-                        show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr and 12 for mov): "+ line.join(" ")+" at line " + i, line_pos);
+                    if(line[j][0] == '#' && bit_size_shifted( Math.abs(this.immediate_solver(line[j]))) > (op.name=="MOV"? 12: 8)){//Immediate respects bit limit
+                        show_error_message("Immediate argument with too many bits (max 8 bit from highest to lowest for dp instr and 12 for mov) at line " + i, line_pos);
                         break;
                     }
                 }
-            else if(op.name[0] != "B"){//We're in a memory instruction
+                if(line.length == (op.name == "MOV"?6:8) && last_elem != "RRX"){
+                    show_error_message("Problem at line, wrong number of element or RRX is badly writtin at " + i, line_pos);
+                }
+                if(line.length> 1 && last_elem != "RRX" && last_elem[0] != "#" && !this.register_names.includes(last_elem)){
+                    show_error_message("Last element not recognized at line " + i, line_pos);
+                    break;
+                } 
+
+                if(shifts.includes(line[line.length -2])){
+                    if(last_elem[0]!= "#"){
+                        show_error_message("Shift must have an immediate argument " + i, line_pos);
+                        break;
+                    }
+                    let val = this.immediate_solver(last_elem);
+                    if(isNaN(val)){
+                        show_error_message("Shift must have a correct immediate argument " + i, line_pos);
+                        break;
+                    }
+                    if(val < 0){
+                        show_error_message("Shift immediate must be positive " + i, line_pos);
+                        break;
+                    }
+                    if(val > 32){
+                        show_error_message("Shift instruction immediate shouldn't be bigger than 32 at line " + i, line_pos);
+                        break;
+                    }
+                    if(["LSL", "ROR"].includes(line[line.length -2]) &&  val > 31){
+                        show_error_message("LSL and ROR immediate shouldn't be bigger than 31 at line " + i, line_pos);
+                        break;
+                    }
+                }   
+            }else if(op.name[0] != "B"){//We're in a memory instruction
                 //Get index of ]
                 let immediate_pos = 0;
                 let register_pos =0;
@@ -338,6 +389,7 @@ class Armv4 extends Generic_logic {
                         prob_with_addr ||= line[5] != "," ;
                         prob_with_addr ||= line[7] != "," ;
                         prob_with_addr ||= !shifts.includes(line[8]);
+                        prob_with_addr ||= line[index-1][0] != "#";
                         register_pos = 6;
                         immediate_pos = 9;
                         break;
@@ -392,11 +444,21 @@ class Armv4 extends Generic_logic {
                     break;
                 }
 
-                if(immediate_pos  > 0 && line[immediate_pos][0] == '#' //It is an immediate
-                && bit_size( Math.abs(this.immediate_solver(line[immediate_pos]))) > 5 //Whose bits fits in 12
-                ){
-                    show_error_message("Immediate shift has too many bits (max 5 bit from highest to zeroth bit): "+ line.join(" ")+" at line " + i, line_pos);
-                    break;
+                if(immediate_pos  > 0 && line[immediate_pos][0] == '#'){ //It is an immediate
+                    let val = this.immediate_solver(line[immediate_pos]);
+                    if(val < 0){
+                        show_error_message("Shift immediate must be positive " + i, line_pos);
+                        break;
+                    }
+                    if(val > 32){
+                        show_error_message("Shift immediate shouldn't be bigger than 32 at line " + i, line_pos);
+                        break;
+                    }
+                    if(["LSL", "ROR"].includes(line[immediate_pos-1]) &&  val > 31){
+                        show_error_message("LSL and ROR immediate shouldn't be bigger than 31 at line " + i, line_pos);
+                        break;
+                    }
+                    
                 }
             }
             

@@ -569,9 +569,14 @@ class armv4_Memory_operator extends armv4_Operator{
                 
                 //shamt5
                 let shamt5 = this.language.immediate_solver(elems[post_indexing?10:9]);
-                bin += get_unsigned_value(shamt5).toString(2).padStart(5, "0");
+                let shift_val = get_unsigned_value(shamt5);
+                bin += (shift_val%32).toString(2).padStart(5, "0");
                 //sh
-                bin += shift_to_sh[elems[post_indexing?9:8]];
+                if(shift_val == 0){
+                    bin += "00"
+                }else{
+                    bin += shift_to_sh[elems[post_indexing?9:8]];
+                }
             } else if((elems[elems.length-2-pre_indexing] == "RRX")||
             (elems[elems.length-1] == "RRX")){
                 //shamt5
@@ -707,7 +712,7 @@ class armv4_Operator_Lists{
         
         let mov_operator = new armv4_Data_proc_operator("MOV", [4,6,7], (a,b,s, nzcv)=>{ return b; }, "1101", language);
 
-        let add_operator = new armv4_Data_proc_operator("ADD", [4,6,7, 9], (a,b,s, nzcv)=>{
+        let add_operator = new armv4_Data_proc_operator("ADD", [4,6,7,8,9], (a,b,s, nzcv)=>{
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
             let sum = (a + b)&0xFFFFFFFF;
@@ -724,7 +729,7 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0100", language);
 
-        let adc_operator = new armv4_Data_proc_operator("ADC", [4,6,7, 9], (a,b,nzcv)=>{
+        let adc_operator = new armv4_Data_proc_operator("ADC", [4,6,7,8,9], (a,b,nzcv)=>{
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
             let sum = (a+b+C)&0xFFFFFFFF;
@@ -740,7 +745,7 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0101", language);
 
-        let sub_operator = new armv4_Data_proc_operator("SUB", [4,6,7, 9], (a,b,s,nzcv)=>{ 
+        let sub_operator = new armv4_Data_proc_operator("SUB", [4,6,7,8,9], (a,b,s,nzcv)=>{ 
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
             let not_b = ~b;
@@ -756,9 +761,9 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0010", language);
 
-        let rsub_operator = new armv4_Data_proc_operator("RSB", [4,6,7, 9], (a,b,s,nzcv)=>{ sub_operator.f(b,a,s)}, "0011");
+        let rsub_operator = new armv4_Data_proc_operator("RSB", [4,6,7,8,9], (a,b,s,nzcv)=>{ sub_operator.f(b,a,s)}, "0011");
 
-        let sbc_operator = new armv4_Data_proc_operator("SBC", [4,6,7, 9], (a,b,s,nzcv)=>{
+        let sbc_operator = new armv4_Data_proc_operator("SBC", [4,6,7,8,9], (a,b,s,nzcv)=>{
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
             let not_b = ~b;
@@ -776,7 +781,7 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0110", language);
 
-        let rsc_operator = new armv4_Data_proc_operator("RSC", [4,6,7, 9], (a,b,s,nzcv)=>{ sbc_operator.f(b,a,s)}, "0111", language);
+        let rsc_operator = new armv4_Data_proc_operator("RSC", [4,6,7,8,9], (a,b,s,nzcv)=>{ sbc_operator.f(b,a,s)}, "0111", language);
 
         let mul_operator = new armv4_Mul_operator("MUL", [4,6], (a,b,s,nzcv)=>{return  (a*b)&0xFFFFFFFF;}, (a,b,c,d,s)=>{ return d; }, "000", language);
 
@@ -798,11 +803,11 @@ class armv4_Operator_Lists{
         let umlal_operator =  new armv4_Mul_operator("UMLAL", [8], (a,b,c,d,s)=>smlal_operator.f( a, get_unsigned_value(b), get_unsigned_value(c), d, s),
                                                         (a,b,c, d,s)=>smlal_operator.g( a, get_unsigned_value(b), get_unsigned_value(c), d, s), "101", language);
 
-        let and_operator = new armv4_Data_proc_operator("AND", [4,6,7, 9], (a,b,s,nzcv)=>{ return a&b; }, "0000", language);
+        let and_operator = new armv4_Data_proc_operator("AND", [4,6,7,8,9], (a,b,s,nzcv)=>{ return a&b; }, "0000", language);
 
-        let or_operator = new armv4_Data_proc_operator("ORR", [4,6,7,9], (a,b,s,nzcv)=>{ return a|b; }, "1100", language);
+        let or_operator = new armv4_Data_proc_operator("ORR", [4,6,7,8,9], (a,b,s,nzcv)=>{ return a|b; }, "1100", language);
 
-        let xor_operator = new armv4_Data_proc_operator("EOR", [4,6,7,9], (a,b,s,nzcv)=>{ return a^b; }, "0001", language);
+        let xor_operator = new armv4_Data_proc_operator("EOR", [4,6,7,8,9], (a,b,s,nzcv)=>{ return a^b; }, "0001", language);
 
         //lsl
         let lsl_operator = new armv4_Data_proc_operator("LSL", [4,6], (a,b,s,nzcv)=>{
@@ -843,9 +848,9 @@ class armv4_Operator_Lists{
         rrx_operator.immediate_ok = false;
         
         //bic
-        let bic_operator = new armv4_Data_proc_operator("BIC", [4,6,7,9], (a,b,s,nzcv)=>{return get_unsigned_value(a)&(~get_unsigned_value(b)); }, "1110", language);
+        let bic_operator = new armv4_Data_proc_operator("BIC", [4,6,7,8,9], (a,b,s,nzcv)=>{return get_unsigned_value(a)&(~get_unsigned_value(b)); }, "1110", language);
         //mvn
-        let mvn_operator = new armv4_Data_proc_operator("MVN", [4,6,7,9], (a,b,s,nzcv)=>{ return ~b; }, "1111", language);
+        let mvn_operator = new armv4_Data_proc_operator("MVN", [4,6,7,8,9], (a,b,s,nzcv)=>{ return ~b; }, "1111", language);
 
         
         //jump operator

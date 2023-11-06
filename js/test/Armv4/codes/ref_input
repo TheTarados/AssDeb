@@ -77,3 +77,15 @@ add r0, r1, ror #1
 strhs r0, [r1]
 LDRSBls r0, [r1]
 LDRSBls r0, [r1,  r2]
+LDR R0, [R1], R2, LSR #32
+LDR R0, [R1, R2, LSR #32]
+LDR R0, [R1, R2, LSR #32]!
+STR R0, [R1], R2, LSR #32
+STR R0, [R1, R2, LSR #32]
+STR R0, [R1, R2, LSR #32]!
+LDR R0, [R1], R2, LSR #0
+LDR R0, [R1, R2, LSR #0]
+LDR R0, [R1, R2, LSR #0]!
+STR R0, [R1], R2, LSR #0
+STR R0, [R1, R2, LSR #0]
+STR R0, [R1, R2, LSR #0]!
