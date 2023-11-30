@@ -37,13 +37,13 @@ function reg_list_to_bool_array(reg_list){
     return to_push_regs;
 }
 
-function get_cond_bin(language, op_block){
-    let cond = op_block.substring(op_block.length-2);
-
-    for(let i = 0; i < language.get_conds().length; i++)
-        if(language.get_conds()[i].name == cond)
-            return language.get_conds()[i].cond_bin;
-
+function get_cond_bin(language, op_block, name_length){
+    if(op_block.length - name_length >=2){
+        let cond = op_block.substring(op_block.length-2);
+        for(let i = 0; i < language.get_conds().length; i++)
+            if(language.get_conds()[i].name == cond)
+                return language.get_conds()[i].cond_bin;
+    }
     return "1110";
     
 }
@@ -114,7 +114,7 @@ class armv4_Data_proc_operator extends armv4_Operator{
         if(op_block.length > 3)
             s = op_block[3] == "S" 
         
-        let bin = get_cond_bin(this.language, op_block);
+        let bin = get_cond_bin(this.language, op_block, this.name.length);
         //2 bits of opcode
         bin += "00";
 
@@ -294,7 +294,7 @@ class armv4_Mul_operator extends armv4_Operator{
         source = +(source)*2;
         let s = op_block[3]== "S" || op_block[5]== "S";
 
-        let bin = get_cond_bin(this.language, op_block);
+        let bin = get_cond_bin(this.language, op_block, this.name.length);
         //2 bits of opcode an d 2 0 bits
         bin += "0000";
         
@@ -348,7 +348,7 @@ class armv4_Comp_operator extends armv4_Operator{
         let is_Shifted_Register = elems.length == 7;
         let is_Immediate =  elems[3][0]=="#";
         
-        let bin = get_cond_bin(this.language, op_block);
+        let bin = get_cond_bin(this.language, op_block, this.name.length);
         //2 bits of opcode & 1 bit of I
         bin += "00";
         bin += is_Immediate?"1":"0";
@@ -518,7 +518,7 @@ class armv4_Memory_operator extends armv4_Operator{
         let last_elem = elems[elems.length-1];
         //4 bits of conditions
         
-        let bin = get_cond_bin(this.language, op_block);
+        let bin = get_cond_bin(this.language, op_block, this.name.length);
         bin += "01";
         let L = elems[0][0] == "L";//STR or LDR
         let B = elems[0][elems[0].length-1] == "B"; //Act on byte or word
@@ -606,7 +606,7 @@ class armv4_Memory_operator extends armv4_Operator{
         let op_block = elems[0];
         let last_elem = elems[elems.length-1];
         
-        let bin = get_cond_bin(this.language, op_block);
+        let bin = get_cond_bin(this.language, op_block, this.name.length);
         bin += "000";
     
         let L = elems[0][0] == "L";//STR or LDR
@@ -690,9 +690,10 @@ class armv4_Operator_Lists{
     constructor(language){
         let jump_hex = (elems, line_index)=>{
             let op_block = elems[0];
-            let bin = get_cond_bin(language, op_block);
+            let L = op_block[1] == "L";
+            let bin = get_cond_bin(language, op_block, 1+L);
             bin += "101";
-            bin += elems[0]=="BL"?"1":"0";
+            bin += L?"1":"0";
             //24 bits of offset
             if(elems[1][0] == "#"){
                 bin += get_unsigned_value((language.immediate_solver(elems[1])>>2)- line_index-2).toString(2).padStart(24, "0");
@@ -956,7 +957,7 @@ class armv4_Operator_Lists{
             return nzcv;}
         push_operator.to_hex = (elems, line_index)=>{
             let op_block = elems[0];
-            let bin = get_cond_bin(language, op_block);
+            let bin = get_cond_bin(language, op_block, 3);
             if(elems.length ==4){//only one register in list
                 bin += "010100101101"
                 bin += parseInt(elems[2].substring(1), 10).toString(2).padStart(4, "0");
@@ -997,7 +998,7 @@ class armv4_Operator_Lists{
             return nzcv;}
         pop_operator.to_hex = (elems, line_index)=>{
             let op_block = elems[0];
-            let bin = get_cond_bin(language, op_block);
+            let bin = get_cond_bin(language, op_block, 3);
             if(elems.length ==4){//only one register in list
                 bin += "010010011101"
                 bin += parseInt(elems[2].substring(1), 10).toString(2).padStart(4, "0");
@@ -1021,7 +1022,7 @@ class armv4_Operator_Lists{
         let ldm_to_hex = (elems, line_index)=>{
             let op_block = elems[0];
             
-            let bin = get_cond_bin(this.language, op_block);
+            let bin = get_cond_bin(this.language, op_block, this.name.length);
             
             bin += "100010"
             bin += elems[2]=="!"? "1":"0";
@@ -1066,7 +1067,7 @@ class armv4_Operator_Lists{
         let nop_operator = new armv4_Operator("NOP",  [1], language);
         nop_operator.execute_line = (elements, nzcv)=>{return nzcv;};
         nop_operator.to_hex = (elements, line_index)=>{
-            return parseInt(get_cond_bin(language, elements[0]),2).toString(16).toUpperCase()+"1A00000";
+            return parseInt(get_cond_bin(language, elements[0], 3),2).toString(16).toUpperCase()+"1A00000";
         };
 
         //.word will be considered as an operator by simplicity
