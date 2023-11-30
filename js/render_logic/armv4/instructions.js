@@ -730,10 +730,10 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0100", language);
 
-        let adc_operator = new armv4_Data_proc_operator("ADC", [4,6,7,8,9], (a,b,nzcv)=>{
+        let adc_operator = new armv4_Data_proc_operator("ADC", [4,6,7,8,9], (a,b,s,nzcv)=>{
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
-            let sum = (a+b+C)&0xFFFFFFFF;
+            let sum = (a+b+nzcv[2])&0xFFFFFFFF;
             if(!s) return sum;
             let a_31 = (a >> 31) & 1;
             let b_31 = (b >> 31) & 1;
@@ -768,7 +768,7 @@ class armv4_Operator_Lists{
             a = get_unsigned_value(a)
             b = get_unsigned_value(b)
             let not_b = ~b;
-            let sum = (a + not_b + 1 - C)&0xFFFFFFFF;
+            let sum = (a + not_b + 1 - nzcv[2])&0xFFFFFFFF;
             if(!s)return sum; 
                 
             let a_31 = (a >> 31) & 1;
@@ -1083,7 +1083,8 @@ class armv4_Operator_Lists{
                           mov_operator,
                           add_operator, 
                           adc_operator,
-                          sub_operator, 
+                          sub_operator,
+                          sbc_operator,
                           rsub_operator, 
                           mul_operator, 
                           and_operator,
