@@ -762,7 +762,7 @@ class armv4_Operator_Lists{
             return sum; 
         }, "0010", language);
 
-        let rsub_operator = new armv4_Data_proc_operator("RSB", [4,6,7,8,9], (a,b,s,nzcv)=>{ sub_operator.f(b,a,s)}, "0011");
+        let rsub_operator = new armv4_Data_proc_operator("RSB", [4,6,7,8,9], (a,b,s,nzcv)=>{ sub_operator.f(b,a,s)}, "0011", language);
 
         let sbc_operator = new armv4_Data_proc_operator("SBC", [4,6,7,8,9], (a,b,s,nzcv)=>{
             a = get_unsigned_value(a)
