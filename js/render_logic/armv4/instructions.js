@@ -690,13 +690,13 @@ class armv4_Operator_Lists{
     constructor(language){
         let jump_hex = (elems, line_index)=>{
             let op_block = elems[0];
-            let L = op_block[1] == "L";
+            let L = (op_block[1] == "L")&&(op_block.length != 3); //We want to take into account BL but not BLT
             let bin = get_cond_bin(language, op_block, 1+L);
             bin += "101";
             bin += L?"1":"0";
             //24 bits of offset
             if(elems[1][0] == "#"){
-                bin += get_unsigned_value((language.immediate_solver(elems[1])>>2)- line_index-2).toString(2).padStart(24, "0");
+                bin += get_unsigned_value((language.immediate_solver(elems[1])>>2)- line_index-2).toString(2).slice(-24).padStart(24, "0");
             }else{
                 //label
                 let offset = language.jmp_addr[elems[1]] - line_index*4-8;
