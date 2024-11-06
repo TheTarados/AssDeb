@@ -35,7 +35,7 @@ Download it, extract it and run the binary assdeb(.exe) inside it. AssDeb should
 ![](./images/Screenshot.png)
 
 AssDeb has 6 zones.
-1. The text area, where you can write your code. It should respect the syntax of the language. On the left if the bar showing the line numbers. They are directly linked to the position in memory of the instruction. A click on the number of a line will put a breakpoint on this line. A breakpoint is a point where the program will stop when it reaches it using run. A breakpoint can be removed by clicking on it again.
+1. The text area, where you can write your code. It should respect the syntax of the language. The line numbers on the left are directly linked to the position in memory of the instruction. A click on the number of a line will toggle a breakpoint on this line. A breakpoint is a point where the program will stop when it reaches it using run.
 2. The stack area, showing the content of the stack.
 3. The heap area, showing the content of the heap.
 4. The register area, showing the content of the registers and of the flags.
@@ -43,10 +43,11 @@ AssDeb has 6 zones.
 6. The timeline, where you can see what instruction the program executed in past steps, and what it will execute in future steps. A click on one of the instruction will make the program change to the corresponding state.
 
 The File menu in the bar on the top of the window lets you:
-- Open a file, in which case its content will show in the text area.
-- Close the file. This will clear the text area and reset the auto-save path.
+- Open a file, in which case its content will show in the text area. 
+- Close the file. This will clear the text area and reset the auto-save pat.
 - Save a file, in which case the content of the text area can be written to a file.
 - Select a language, which is a WIP feature to support more than ArmV4. (Armv5 is not functional yet.)
+Note: Opened files will automatically receive changes via an auto-save: upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will stop this synchronization.
 
 The Hex menu in the bar on the top of the window lets you:
 - Generate the Hex of the current code and put it in your clipboard.
@@ -55,8 +56,6 @@ The Hex menu in the bar on the top of the window lets you:
 The Challenge menu:
 - Open a challenge of your choice. This will switch to a layout with a description of the task at the bottom of the text area and a zone with the input/output of the tests on right of the text area. You can simply run your program to see the results. Upon completion of the tests, the timeline will be replaced with an indication of the success of the tests and the performances of your program.
 - Close the challenge and go back to the normal layout.
-
-This auto-save is a feature where, upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will thus stop this synchronization.
 
 # Is AssDeb bug-free?
 
