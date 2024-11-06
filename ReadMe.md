@@ -47,7 +47,9 @@ The File menu in the bar on the top of the window lets you:
 - Close the file. This will clear the text area and reset the auto-save pat.
 - Save a file, in which case the content of the text area can be written to a file.
 - Select a language, which is a WIP feature to support more than ArmV4. (Armv5 is not functional yet.)
-Note: Opened files will automatically receive changes via an auto-save: upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will stop this synchronization.
+
+> [!NOTE]  
+> Opened files will automatically receive changes via an auto-save: upon saving to a file or opening a file, any change done to the text area will impact the file you last opened/saved to. Closing the file will stop this synchronization.
 
 The Hex menu in the bar on the top of the window lets you:
 - Generate the Hex of the current code and put it in your clipboard.
