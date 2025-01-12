@@ -10,10 +10,26 @@ const Armv5 = require('./js/render_logic/armv5/armv5.js');
 const { log } = require('console');
 const fsPromises = require('fs').promises;
 
+var first_file = true;
 var can_gen_hex = true;
 
 //Listen to event "Open file" from main.js
 ipcRenderer.on('Open file', (event, arg) => {
+	if (first_file == false) {
+
+        const userResponse = confirm("Do you want to save your file before opening another one?");
+
+        if (userResponse) {
+            // User clicked "OK" and wants to save it
+
+            fs.writeFile (opened_file, text_area.value, function(err) {
+                if (err) throw err;
+            });
+        }
+    }
+
+    first_file = false;
+	
     //Open file dialog
     dialog.showOpenDialog({
             properties: ['openFile']
@@ -91,6 +107,12 @@ ipcRenderer.on('Close file', (event, arg) => {
 })
 
 ipcRenderer.on('Save file', (event, arg) => {
+    fs.writeFile (opened_file, text_area.value, function(err) {
+        if (err) throw err;
+    });
+})
+
+ipcRenderer.on('Save file as', (event, arg) => {
     dialog.showSaveDialog().then((path) => {
         opened_file = path.filePath;
         fs.writeFile (path.filePath, text_area.value, function(err) {
