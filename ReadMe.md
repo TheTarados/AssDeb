@@ -45,7 +45,8 @@ AssDeb has 6 zones.
 The File menu in the bar on the top of the window lets you:
 - Open a file, in which case its content will show in the text area. 
 - Close the file. This will clear the text area and reset the auto-save pat.
-- Save a file, in which case the content of the text area can be written to a file.
+- Save a file, which will update the file previously opened with the content in the text area.
+- Save a file as, in which case the content of the text area can be written to a specified file.
 - Select a language, which is a WIP feature to support more than ArmV4. (Armv5 is not functional yet.)
 
 > [!NOTE]  
